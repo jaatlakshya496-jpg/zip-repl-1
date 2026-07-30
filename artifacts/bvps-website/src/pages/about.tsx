@@ -1,8 +1,55 @@
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
-import { Target, BookOpen, Clock, Heart, Award, UserCircle2, Quote } from 'lucide-react';
+import { Target, BookOpen, Clock, Heart, Award, UserCircle2, Quote, X, ArrowRight } from 'lucide-react';
 import aboutImg from '@assets/generated_images/about-classroom.jpg';
+import schoolTypeImg from '@assets/generated_images/about-school-type.jpg';
+import academicImg from '@assets/generated_images/about-academic-level.jpg';
+import mediumImg from '@assets/generated_images/about-medium.jpg';
+import hoursImg from '@assets/generated_images/about-school-hours.jpg';
+
+const overviewCards = [
+  {
+    icon: Award,
+    title: 'School Type',
+    desc: 'Private, Co-educational\n(Boys & Girls)',
+    image: schoolTypeImg,
+    detail: 'BVPS Kalayat is a private co-educational institution welcoming both boys and girls from Class 1 to 12, fostering a balanced and inclusive learning environment.',
+  },
+  {
+    icon: BookOpen,
+    title: 'Academic Level',
+    desc: 'Senior Secondary\n(Classes 1 to 12)',
+    image: academicImg,
+    detail: 'We offer a complete academic journey from primary through senior secondary (Class 12), preparing students for board exams and higher education.',
+  },
+  {
+    icon: Heart,
+    title: 'Medium',
+    desc: 'Hindi Medium Instruction\nwith English integration',
+    image: mediumImg,
+    detail: 'Instruction is delivered in Hindi to keep students rooted in their language, while English is integrated across subjects to build confidence in both languages.',
+  },
+  {
+    icon: Clock,
+    title: 'School Hours',
+    desc: 'Mon–Sat: 8:00 AM – 3:00 PM\nSunday: Closed',
+    image: hoursImg,
+    detail: 'School runs six days a week, Monday to Saturday, from 8:00 AM to 3:00 PM. Morning assembly begins the day, building discipline and community spirit.',
+  },
+];
+
+type OverviewCard = typeof overviewCards[number];
 
 export default function About() {
+  const [selected, setSelected] = useState<OverviewCard | null>(null);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setSelected(null); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
   return (
     <div className="flex flex-col">
       {/* Page Header */}
@@ -111,43 +158,86 @@ export default function About() {
           {/* School Details */}
           <ScrollReveal>
             <div className="bg-white rounded-3xl p-8 md:p-12 border border-border shadow-md">
-              <h2 className="text-3xl font-serif font-bold text-black mb-10 text-center">School Overview</h2>
-              
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div className="flex flex-col items-center text-center p-6 bg-primary rounded-2xl">
-                  <div className="w-14 h-14 bg-secondary rounded-full flex items-center justify-center mb-4 text-primary">
-                    <Award className="w-7 h-7" />
-                  </div>
-                  <h4 className="font-bold text-lg mb-2 text-white">School Type</h4>
-                  <p className="text-primary-foreground/70">Private, Co-educational<br/>(Boys & Girls)</p>
-                </div>
-                
-                <div className="flex flex-col items-center text-center p-6 bg-primary rounded-2xl">
-                  <div className="w-14 h-14 bg-secondary rounded-full flex items-center justify-center mb-4 text-primary">
-                    <BookOpen className="w-7 h-7" />
-                  </div>
-                  <h4 className="font-bold text-lg mb-2 text-white">Academic Level</h4>
-                  <p className="text-primary-foreground/70">Senior Secondary<br/>(Classes 1 to 12)</p>
-                </div>
-                
-                <div className="flex flex-col items-center text-center p-6 bg-primary rounded-2xl">
-                  <div className="w-14 h-14 bg-secondary rounded-full flex items-center justify-center mb-4 text-primary">
-                    <Heart className="w-7 h-7" />
-                  </div>
-                  <h4 className="font-bold text-lg mb-2 text-white">Medium</h4>
-                  <p className="text-primary-foreground/70">Hindi Medium Instruction<br/>with English integration</p>
-                </div>
+              <h2 className="text-3xl font-serif font-bold text-black mb-2 text-center">School Overview</h2>
+              <p className="text-center text-muted-foreground text-sm mb-10">Click any card to see a photo</p>
 
-                <div className="flex flex-col items-center text-center p-6 bg-primary rounded-2xl">
-                  <div className="w-14 h-14 bg-secondary rounded-full flex items-center justify-center mb-4 text-primary">
-                    <Clock className="w-7 h-7" />
-                  </div>
-                  <h4 className="font-bold text-lg mb-2 text-white">School Hours</h4>
-                  <p className="text-primary-foreground/70">Mon–Sat: 8:00 AM – 3:00 PM<br/>Sunday: Closed</p>
-                </div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {overviewCards.map((card, i) => (
+                  <motion.button
+                    key={card.title}
+                    onClick={() => setSelected(card)}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    whileHover={{ y: -5, scale: 1.03 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.08, duration: 0.35 }}
+                    className="flex flex-col items-center text-center p-6 bg-primary rounded-2xl cursor-pointer group hover:bg-primary/90 hover:shadow-xl transition-all w-full relative overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-secondary/0 group-hover:bg-secondary/5 transition-colors duration-300 rounded-2xl" />
+                    <div className="w-14 h-14 bg-secondary rounded-full flex items-center justify-center mb-4 text-primary group-hover:scale-110 transition-transform relative z-10">
+                      <card.icon className="w-7 h-7" />
+                    </div>
+                    <h4 className="font-bold text-lg mb-2 text-white relative z-10">{card.title}</h4>
+                    <p className="text-primary-foreground/70 text-sm relative z-10 whitespace-pre-line">{card.desc}</p>
+                    <span className="mt-3 text-secondary text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity relative z-10">Tap to see photo →</span>
+                  </motion.button>
+                ))}
               </div>
             </div>
           </ScrollReveal>
+
+          {/* Modal */}
+          <AnimatePresence>
+            {selected && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+                onClick={() => setSelected(null)}
+              >
+                <motion.div
+                  initial={{ scale: 0.85, opacity: 0, y: 30 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0.85, opacity: 0, y: 30 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+                  className="bg-white rounded-3xl overflow-hidden shadow-2xl max-w-lg w-full"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="relative">
+                    <img
+                      src={selected.image}
+                      alt={selected.title}
+                      className="w-full h-72 object-cover"
+                    />
+                    <button
+                      onClick={() => setSelected(null)}
+                      className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors backdrop-blur-sm"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                    <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-4 left-5 flex items-center gap-2">
+                      <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center text-primary shrink-0">
+                        <selected.icon className="w-4 h-4" />
+                      </div>
+                      <h3 className="text-white font-serif font-bold text-xl">{selected.title}</h3>
+                    </div>
+                  </div>
+                  <div className="px-6 py-5">
+                    <p className="text-muted-foreground leading-relaxed text-sm">{selected.detail}</p>
+                    <button
+                      onClick={() => setSelected(null)}
+                      className="mt-4 inline-flex items-center gap-1.5 text-primary font-bold text-sm hover:text-secondary transition-colors"
+                    >
+                      Close <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
         </div>
       </section>

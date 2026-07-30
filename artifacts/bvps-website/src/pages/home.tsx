@@ -1,7 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, GraduationCap, Building2, Calendar, ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, BookOpen, Dumbbell, Monitor, ShieldCheck, Droplets, Maximize2, Quote } from 'lucide-react';
+import { Users, GraduationCap, Building2, Calendar, ArrowRight, ChevronLeft, ChevronRight, BookOpen, Dumbbell, Monitor, ShieldCheck, Droplets, Maximize2, Quote, X } from 'lucide-react';
+
+import libImg from '@assets/generated_images/home-facility-library.jpg';
+import compImg from '@assets/generated_images/home-facility-computer.jpg';
+import smartImg from '@assets/generated_images/home-facility-smartclass.jpg';
+import playImg from '@assets/generated_images/home-facility-playground.jpg';
+import cctvImg from '@assets/generated_images/home-facility-cctv.jpg';
+import roImg from '@assets/generated_images/home-facility-ro-water.jpg';
+import classImg from '@assets/generated_images/home-facility-classroom.jpg';
 
 // Real BVPS hero images from uploaded photos
 const heroSlides = [
@@ -35,13 +43,13 @@ const stats = [
 ];
 
 const facilities = [
-  { icon: BookOpen, name: 'Library', desc: 'Rich collection of books for all classes' },
-  { icon: Monitor, name: 'Computer Lab', desc: 'Modern computers with internet access' },
-  { icon: Monitor, name: 'Smart Classes', desc: 'Interactive digital learning boards' },
-  { icon: Dumbbell, name: 'Playground', desc: 'Spacious ground for sports & activities' },
-  { icon: ShieldCheck, name: 'CCTV Security', desc: '24/7 campus surveillance' },
-  { icon: Droplets, name: 'RO Water', desc: 'Clean purified drinking water' },
-  { icon: Maximize2, name: 'Spacious Rooms', desc: 'Well-ventilated classrooms' },
+  { icon: BookOpen,   name: 'Library',        desc: 'Rich collection of books for all classes',   image: libImg  },
+  { icon: Monitor,    name: 'Computer Lab',    desc: 'Modern computers with internet access',       image: compImg },
+  { icon: Monitor,    name: 'Smart Classes',   desc: 'Interactive digital learning boards',         image: smartImg},
+  { icon: Dumbbell,   name: 'Playground',      desc: 'Spacious ground for sports & activities',    image: playImg },
+  { icon: ShieldCheck,name: 'CCTV Security',   desc: '24/7 campus surveillance',                   image: cctvImg },
+  { icon: Droplets,   name: 'RO Water',        desc: 'Clean purified drinking water',               image: roImg   },
+  { icon: Maximize2,  name: 'Spacious Rooms',  desc: 'Well-ventilated classrooms',                 image: classImg},
 ];
 
 // Gallery preview - real photos
@@ -54,8 +62,11 @@ const previewPhotos = [
   new URL('@assets/Screenshot_20260721_100828_1784611829062.jpg', import.meta.url).href,
 ];
 
+type Facility = typeof facilities[number];
+
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [selectedFacility, setSelectedFacility] = useState<Facility | null>(null);
 
   // Auto-advance hero slides
   useEffect(() => {
@@ -63,6 +74,13 @@ export default function Home() {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     }, 4000);
     return () => clearInterval(timer);
+  }, []);
+
+  // Close modal on Escape key
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setSelectedFacility(null); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
   }, []);
 
   const prev = () => setCurrentSlide((s) => (s - 1 + heroSlides.length) % heroSlides.length);
@@ -242,21 +260,23 @@ export default function Home() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
             {facilities.map((f, i) => (
-              <motion.div
+              <motion.button
                 key={f.name}
+                onClick={() => setSelectedFacility(f)}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 whileHover={{ y: -6 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.07, duration: 0.4 }}
-                className="bg-white/10 border border-white/20 rounded-2xl p-6 flex flex-col items-center text-center cursor-default hover:bg-white/15 transition-colors"
+                className="bg-white/10 border border-white/20 rounded-2xl p-6 flex flex-col items-center text-center cursor-pointer hover:bg-white/20 hover:border-secondary/60 transition-all text-left w-full group"
               >
-                <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center mb-4 text-primary">
+                <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center mb-4 text-primary group-hover:scale-110 transition-transform">
                   <f.icon className="w-6 h-6" />
                 </div>
                 <h3 className="font-bold text-white text-base mb-1">{f.name}</h3>
                 <p className="text-white/65 text-xs leading-relaxed">{f.desc}</p>
-              </motion.div>
+                <span className="mt-3 text-secondary text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">Tap to see →</span>
+              </motion.button>
             ))}
           </div>
 
@@ -306,6 +326,62 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ── FACILITY IMAGE MODAL ── */}
+      <AnimatePresence>
+        {selectedFacility && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+            onClick={() => setSelectedFacility(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.85, opacity: 0, y: 30 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+              className="bg-white rounded-3xl overflow-hidden shadow-2xl max-w-lg w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Image */}
+              <div className="relative">
+                <img
+                  src={selectedFacility.image}
+                  alt={selectedFacility.name}
+                  className="w-full h-72 object-cover"
+                />
+                <button
+                  onClick={() => setSelectedFacility(null)}
+                  className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors backdrop-blur-sm"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+                <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-4 left-5 flex items-center gap-2">
+                  <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center text-primary shrink-0">
+                    <selectedFacility.icon className="w-4 h-4" />
+                  </div>
+                  <h3 className="text-white font-serif font-bold text-xl">{selectedFacility.name}</h3>
+                </div>
+              </div>
+              {/* Text */}
+              <div className="px-6 py-5">
+                <p className="text-muted-foreground leading-relaxed text-sm">{selectedFacility.desc}</p>
+                <Link
+                  href="/facilities"
+                  className="mt-4 inline-flex items-center gap-1.5 text-primary font-bold text-sm hover:text-secondary transition-colors"
+                  onClick={() => setSelectedFacility(null)}
+                >
+                  View all facilities <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── CTA BANNER ── */}
       <section className="py-24 bg-primary relative overflow-hidden">
