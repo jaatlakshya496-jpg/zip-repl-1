@@ -14,10 +14,10 @@ export function FloatingContact() {
             <span>Mon–Sat: 8:00 AM – 3:00 PM</span>
           </div>
         </div>
-        <div className="flex items-center gap-2 font-bold tracking-wider">
+        <a href="tel:+919812550200" className="flex items-center gap-2 font-bold tracking-wider hover:text-secondary transition-colors">
           <Phone className="w-4 h-4 text-secondary" />
           <span>+91 98125 50200</span>
-        </div>
+        </a>
       </div>
     </div>
   );

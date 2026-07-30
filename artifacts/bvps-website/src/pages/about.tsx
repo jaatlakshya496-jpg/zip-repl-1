@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
-import { Target, BookOpen, Clock, Heart, Award, UserCircle2, Quote, X, ArrowRight } from 'lucide-react';
+import { Target, BookOpen, Clock, Heart, Award, Quote, X, ArrowRight } from 'lucide-react';
 import aboutImg from '@assets/generated_images/about-classroom.jpg';
+import principalImg from '@assets/principal-ramphal-sharma.png';
 import schoolTypeImg from '@assets/generated_images/about-school-type.jpg';
 import academicImg from '@assets/generated_images/about-academic-level.jpg';
 import mediumImg from '@assets/generated_images/about-medium.jpg';
@@ -14,7 +15,7 @@ const overviewCards = [
     title: 'School Type',
     desc: 'Private, Co-educational\n(Boys & Girls)',
     image: schoolTypeImg,
-    detail: 'BVPS Kalayat is a private co-educational institution welcoming both boys and girls from Class 1 to 12, fostering a balanced and inclusive learning environment.',
+    detail: 'Bal Vikas Public School is a private co-educational institution welcoming both boys and girls from Class 1 to 12, fostering a balanced and inclusive learning environment.',
   },
   {
     icon: BookOpen,
@@ -133,8 +134,8 @@ export default function About() {
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/3 -translate-x-1/3" />
               <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
                 <div className="shrink-0 flex flex-col items-center gap-3">
-                  <div className="w-28 h-28 rounded-full bg-secondary/20 border-4 border-secondary flex items-center justify-center">
-                    <UserCircle2 className="w-16 h-16 text-secondary" />
+                  <div className="w-28 h-28 rounded-full border-4 border-secondary overflow-hidden">
+                    <img src={principalImg} alt="Sh. Ramphal Sharma" className="w-full h-full object-cover" />
                   </div>
                   <div className="text-center">
                     <p className="text-white font-serif font-bold text-xl">Sh. Ramphal Sharma</p>
