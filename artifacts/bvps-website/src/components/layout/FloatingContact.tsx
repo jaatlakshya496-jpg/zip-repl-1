@@ -18,10 +18,16 @@ export function FloatingContact() {
             <span>School Code: <span className="font-bold text-secondary">06050300920</span></span>
           </div>
         </div>
-        <a href="tel:+919812550200" className="flex items-center gap-2 font-bold tracking-wider hover:text-secondary transition-colors">
-          <Phone className="w-4 h-4 text-secondary" />
-          <span>+91 98125 50200</span>
-        </a>
+        <div className="flex items-center gap-4">
+          <a href="tel:+919812550200" className="flex items-center gap-2 font-bold tracking-wider hover:text-secondary transition-colors">
+            <Phone className="w-4 h-4 text-secondary" />
+            <span>+91 98125 50200</span>
+          </a>
+          <a href="tel:+919812550202" className="flex items-center gap-2 font-bold tracking-wider hover:text-secondary transition-colors">
+            <Phone className="w-4 h-4 text-secondary" />
+            <span>+91 98125 50202</span>
+          </a>
+        </div>
       </div>
     </div>
   );
