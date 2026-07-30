@@ -2,6 +2,7 @@ import { ReactNode, useEffect } from 'react';
 import { FloatingContact } from './FloatingContact';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
+import { WhatsAppButton } from './WhatsAppButton';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'wouter';
 
@@ -33,6 +34,7 @@ export function RootLayout({ children }: { children: ReactNode }) {
         </AnimatePresence>
       </main>
       <Footer />
+      <WhatsAppButton />
     </div>
   );
 }
