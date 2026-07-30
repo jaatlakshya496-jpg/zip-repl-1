@@ -7,8 +7,9 @@ import {
   Star, MessageSquare, CheckCircle2, ChevronDown, ChevronUp,
   FileText, IndianRupee, Clock, MapPin, Calendar, BookOpen,
   Briefcase, User, Mail, Home, School, Send, CheckSquare, Square,
-  Video, PhoneCall, Building2, X, Info,
+  Video, PhoneCall, Building2, X, Info, Quote,
 } from 'lucide-react';
+import principalImg from '@assets/principal-ramphal-sharma.png';
 import { getFeedbacks, saveFeedback, type FeedbackEntry, roleLabels } from '@/lib/feedback-store';
 import { saveApplication } from '@/lib/enquiry-store';
 import { Button } from '@/components/ui/button';
@@ -799,6 +800,70 @@ export default function Admissions() {
             </div>
           </ScrollReveal>
 
+        </div>
+      </section>
+
+      {/* ── Principal's Message Section ── */}
+      <section className="py-16 bg-primary/5 border-t border-border">
+        <div className="container mx-auto px-4 md:px-6 max-w-4xl">
+          <ScrollReveal>
+            <div className="text-center mb-10">
+              <span className="text-secondary font-semibold uppercase tracking-widest text-sm">From the Desk of</span>
+              <h2 className="text-3xl font-serif font-bold text-black mt-1">Principal's Message</h2>
+              <div className="w-16 h-1 bg-secondary mx-auto mt-3 rounded-full" />
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal>
+            <div className="bg-white rounded-3xl shadow-lg border border-border overflow-hidden">
+              <div className="flex flex-col md:flex-row">
+                {/* Photo side */}
+                <div className="md:w-64 shrink-0 bg-primary flex flex-col items-center justify-center p-8 gap-4">
+                  <div className="w-32 h-32 rounded-full border-4 border-secondary overflow-hidden shadow-xl">
+                    <img
+                      src={principalImg}
+                      alt="Sh. Ramphal Sharma"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-white font-serif font-bold text-lg leading-tight">Sh. Ramphal Sharma</p>
+                    <p className="text-secondary text-sm font-semibold uppercase tracking-wider mt-1">Principal</p>
+                    <p className="text-primary-foreground/60 text-xs mt-1">Bal Vikas Public School</p>
+                    <p className="text-primary-foreground/60 text-xs">Kalayat, Haryana</p>
+                  </div>
+                </div>
+
+                {/* Message side */}
+                <div className="flex-1 p-8 md:p-10">
+                  <Quote className="w-10 h-10 text-secondary/30 mb-4" />
+                  <p className="text-muted-foreground text-base leading-relaxed italic mb-5">
+                    "Welcome to Bal Vikas Public School — a place where every child's potential is recognized and nurtured. As you consider joining our school family, I want you to know that our doors are open to all students who are eager to learn, grow, and contribute to society."
+                  </p>
+                  <p className="text-muted-foreground text-base leading-relaxed mb-5">
+                    At BVPS, we believe education is not just about academics — it is about building character, confidence, and compassion. Our dedicated team of 29 teachers works tirelessly to ensure that every student receives personal attention and the best possible guidance.
+                  </p>
+                  <p className="text-muted-foreground text-base leading-relaxed mb-6">
+                    I warmly invite you and your family to visit our school, meet our staff, and experience the BVPS spirit firsthand. We look forward to welcoming your child into our family for the session 2025–26.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <a
+                      href="tel:+919812550200"
+                      className="inline-flex items-center gap-2 bg-secondary text-primary hover:bg-secondary/90 font-bold rounded-full px-6 h-11 text-sm transition-colors"
+                    >
+                      <Phone className="w-4 h-4" /> Speak with the Principal
+                    </a>
+                    <Link
+                      href="/contact"
+                      className="inline-flex items-center gap-2 border border-primary text-primary hover:bg-primary hover:text-white font-bold rounded-full px-6 h-11 text-sm transition-colors"
+                    >
+                      Send a Message <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
