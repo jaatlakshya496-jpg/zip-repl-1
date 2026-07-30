@@ -1,20 +1,24 @@
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
 import { Link } from 'wouter';
-import { ClipboardList, Users, UserCheck, GraduationCap, ArrowRight, Phone, Star, MessageSquare, CheckCircle2 } from 'lucide-react';
+import {
+  ClipboardList, Users, UserCheck, GraduationCap, ArrowRight, Phone,
+  Star, MessageSquare, CheckCircle2, ChevronDown, ChevronUp,
+  FileText, IndianRupee, Clock, MapPin, Calendar, BookOpen,
+  Briefcase, User, Mail, Home, School, Send, CheckSquare, Square,
+  Video, PhoneCall, Building2, X, Info,
+} from 'lucide-react';
 import { getFeedbacks, saveFeedback, type FeedbackEntry, roleLabels } from '@/lib/feedback-store';
+import { saveApplication } from '@/lib/enquiry-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 
-/* ── Star display (read-only) ─────────────────────────── */
+/* ─── Star display ─────────────────────────────────────── */
 function StarDisplay({ rating }: { rating: number }) {
   return (
     <div className="flex gap-0.5">
@@ -25,7 +29,6 @@ function StarDisplay({ rating }: { rating: number }) {
   );
 }
 
-/* ── Inline star picker ───────────────────────────────── */
 function StarPicker({ value, onChange }: { value: number; onChange: (v: number) => void }) {
   const [hovered, setHovered] = useState(0);
   return (
@@ -40,48 +43,238 @@ function StarPicker({ value, onChange }: { value: number; onChange: (v: number) 
   );
 }
 
-/* ── Main page ────────────────────────────────────────── */
+/* ─── Enquiry info accordion items ─────────────────────── */
+const enquiryItems = [
+  {
+    icon: IndianRupee,
+    title: 'Fee Structure',
+    color: 'bg-emerald-50 border-emerald-200',
+    iconColor: 'text-emerald-600 bg-emerald-100',
+    content: (
+      <div className="space-y-3">
+        <p className="text-sm text-muted-foreground">Fees vary by class. Below is an approximate guide. Exact details are provided at the admission office.</p>
+        <div className="overflow-x-auto rounded-xl border border-border">
+          <table className="w-full text-sm">
+            <thead className="bg-primary text-white">
+              <tr>
+                <th className="text-left px-4 py-2.5 font-semibold">Class</th>
+                <th className="text-left px-4 py-2.5 font-semibold">Admission Fee</th>
+                <th className="text-left px-4 py-2.5 font-semibold">Monthly Tuition</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {[
+                ['Class 1 – 5',  '₹ 1,500', '₹ 600 – 800'],
+                ['Class 6 – 8',  '₹ 2,000', '₹ 800 – 1,000'],
+                ['Class 9 – 10', '₹ 2,500', '₹ 1,000 – 1,200'],
+                ['Class 11 – 12','₹ 3,000', '₹ 1,200 – 1,500'],
+              ].map(([cls, adm, mon]) => (
+                <tr key={cls} className="hover:bg-muted/30">
+                  <td className="px-4 py-2.5 font-medium text-black">{cls}</td>
+                  <td className="px-4 py-2.5 text-muted-foreground">{adm}</td>
+                  <td className="px-4 py-2.5 text-muted-foreground">{mon}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-xs text-muted-foreground italic">* Annual charges, exam fees & activity fees are separate. Visit office for exact amounts.</p>
+      </div>
+    ),
+  },
+  {
+    icon: FileText,
+    title: 'Documents Required',
+    color: 'bg-blue-50 border-blue-200',
+    iconColor: 'text-blue-600 bg-blue-100',
+    content: (
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground mb-3">Please bring originals + 2 photocopies of each document at the time of submission.</p>
+        {[
+          ['Birth Certificate', 'Municipal / Gram Panchayat issued'],
+          ['Aadhaar Card', 'Student\'s Aadhaar (parent if not available)'],
+          ['Previous School TC', 'Transfer Certificate from last school attended'],
+          ['Previous Class Report Card', 'Mark sheet / Progress card'],
+          ['Passport Photos', '4 recent colour photos (white background)'],
+          ['Residence Proof', 'Electricity bill / Ration card / Voter ID of parent'],
+          ['Caste Certificate', 'If applicable (SC/BC/OBC)'],
+        ].map(([doc, note]) => (
+          <div key={doc} className="flex items-start gap-3 p-3 rounded-lg bg-white border border-border">
+            <CheckCircle2 className="w-4 h-4 text-secondary mt-0.5 shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-black">{doc}</p>
+              <p className="text-xs text-muted-foreground">{note}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    ),
+  },
+  {
+    icon: Clock,
+    title: 'School Timings & Office Hours',
+    color: 'bg-orange-50 border-orange-200',
+    iconColor: 'text-orange-600 bg-orange-100',
+    content: (
+      <div className="space-y-3">
+        {[
+          { label: 'School Hours', value: 'Monday – Saturday: 8:00 AM – 3:00 PM', sub: 'Sunday: Closed' },
+          { label: 'Admission Office', value: 'Monday – Saturday: 9:00 AM – 2:00 PM', sub: 'Best time to visit: 10 AM – 12 PM' },
+          { label: 'Morning Assembly', value: 'Daily at 8:00 AM sharp', sub: 'All students must be present' },
+          { label: 'Break / Recess', value: '12:00 PM – 12:30 PM', sub: 'Mid-day meal available' },
+        ].map(({ label, value, sub }) => (
+          <div key={label} className="flex items-start gap-3 p-3 rounded-lg bg-white border border-border">
+            <Clock className="w-4 h-4 text-secondary mt-0.5 shrink-0" />
+            <div>
+              <p className="text-sm font-bold text-black">{label}</p>
+              <p className="text-sm text-muted-foreground">{value}</p>
+              <p className="text-xs text-muted-foreground/70">{sub}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    ),
+  },
+  {
+    icon: MapPin,
+    title: 'Contact & Location',
+    color: 'bg-purple-50 border-purple-200',
+    iconColor: 'text-purple-600 bg-purple-100',
+    content: (
+      <div className="space-y-3">
+        <div className="grid sm:grid-cols-2 gap-3">
+          {[
+            { icon: Phone, label: 'Phone', value: '+91 98125 50200', note: 'Mon–Sat, 9 AM – 2 PM' },
+            { icon: MapPin, label: 'Address', value: 'Railway Road, Kalayat', note: 'District Kaithal, Haryana – 136027' },
+            { icon: User, label: 'Principal', value: 'Sh. Ramphal Sharma', note: 'Available by appointment' },
+            { icon: Building2, label: 'Board', value: 'Haryana Board (HBSE)', note: 'Bhiwani, Haryana' },
+          ].map(({ icon: Icon, label, value, note }) => (
+            <div key={label} className="flex items-start gap-3 p-3 rounded-lg bg-white border border-border">
+              <Icon className="w-4 h-4 text-secondary mt-0.5 shrink-0" />
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{label}</p>
+                <p className="text-sm font-semibold text-black">{value}</p>
+                <p className="text-xs text-muted-foreground/70">{note}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <a
+          href="https://maps.google.com/?q=Bal+Vikas+Public+School+Kalayat+Kaithal+Haryana"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 text-sm text-primary font-semibold hover:text-secondary transition-colors mt-1"
+        >
+          <MapPin className="w-4 h-4" /> Open in Google Maps →
+        </a>
+      </div>
+    ),
+  },
+];
+
+/* ─── Interview tips ────────────────────────────────────── */
+const interviewTips = [
+  { for: 'Student', tips: ['Dress in clean school uniform', 'Be polite and confident', 'Know your previous class subjects', 'Carry your report card'] },
+  { for: 'Parents', tips: ['Bring all required documents', 'Be ready to discuss child\'s strengths', 'Ask about curriculum and fee schedule', 'Note the school rules and calendar'] },
+];
+
+const timeSlots = ['9:00 AM – 10:00 AM', '10:00 AM – 11:00 AM', '11:00 AM – 12:00 PM', '12:00 PM – 1:00 PM'];
+
+/* ─── Enrollment checklist ──────────────────────────────── */
+const enrollmentItems = [
+  'Admission confirmation letter from school',
+  'Original + photocopy of all required documents',
+  'Admission fee payment (cash / online transfer)',
+  'Student Aadhaar card copy',
+  'Signed school rules & parent declaration form',
+  'Medical fitness certificate (if required)',
+  '4 passport-size photographs',
+  'Previous school TC (Transfer Certificate)',
+  'School uniform purchase from approved vendor',
+  'School diary & stationery as per class list',
+];
+
+/* ─── Main page ─────────────────────────────────────────── */
 export default function Admissions() {
+  /* feedback state */
   const [feedbacks, setFeedbacks] = useState<FeedbackEntry[]>([]);
-  const [submitted, setSubmitted] = useState(false);
-  const [name, setName] = useState('');
-  const [role, setRole] = useState<FeedbackEntry['role'] | ''>('');
-  const [rating, setRating] = useState(0);
-  const [message, setMessage] = useState('');
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [fbSubmitted, setFbSubmitted] = useState(false);
+  const [fbName, setFbName] = useState('');
+  const [fbRole, setFbRole] = useState<FeedbackEntry['role'] | ''>('');
+  const [fbRating, setFbRating] = useState(0);
+  const [fbMessage, setFbMessage] = useState('');
+  const [fbErrors, setFbErrors] = useState<Record<string, string>>({});
+
+  /* enquiry accordion */
+  const [openEnquiry, setOpenEnquiry] = useState<number | null>(null);
+
+  /* application form state */
+  const [appSubmitted, setAppSubmitted] = useState(false);
+  const [appErrors, setAppErrors] = useState<Record<string, string>>({});
+  const [form, setForm] = useState({
+    studentName: '', dob: '', gender: '', classApplying: '', stream: '',
+    parentName: '', relation: '', mobile: '', email: '',
+    address: '', previousSchool: '', message: '',
+    interviewDate: '', interviewSlot: '', interviewMode: '',
+  });
+
+  /* enrollment checklist */
+  const [checked, setChecked] = useState<boolean[]>(enrollmentItems.map(() => false));
 
   useEffect(() => { setFeedbacks(getFeedbacks()); }, []);
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const errs: Record<string, string> = {};
-    if (!name.trim() || name.length < 2) errs.name = 'Name is required';
-    if (!role) errs.role = 'Please select your role';
-    if (rating === 0) errs.rating = 'Please select a rating';
-    if (!message.trim() || message.length < 5) errs.message = 'Please write your feedback';
-    setErrors(errs);
-    if (Object.keys(errs).length > 0) return;
-
-    const entry = saveFeedback({ name, role: role as FeedbackEntry['role'], category: 'overall', rating, feedback: message });
-    setFeedbacks([entry, ...feedbacks]);
-    setSubmitted(true);
-    setName(''); setRole(''); setRating(0); setMessage('');
+  function set(field: string, value: string) {
+    setForm(f => ({ ...f, [field]: value }));
   }
 
-  const steps = [
-    { icon: ClipboardList, title: '1. Inquiry & Information', description: 'Visit our campus or contact the admission office to learn about our curriculum, facilities, and fee structure.' },
-    { icon: Users, title: '2. Application Submission', description: 'Collect the admission form from the school office. Submit the filled form along with required documents (birth certificate, previous school records, photos).' },
-    { icon: UserCheck, title: '3. Interaction / Interview', description: "A brief, friendly interaction with the student and parents to understand the child's background and educational needs." },
-    { icon: GraduationCap, title: '4. Enrollment', description: 'Upon confirmation, pay the admission fees and complete the final enrollment formalities to join the BVPS family.' },
-  ];
+  function validateApp() {
+    const e: Record<string, string> = {};
+    if (!form.studentName.trim()) e.studentName = 'Student name required';
+    if (!form.dob) e.dob = 'Date of birth required';
+    if (!form.gender) e.gender = 'Select gender';
+    if (!form.classApplying) e.classApplying = 'Select class';
+    if (!form.parentName.trim()) e.parentName = 'Parent name required';
+    if (!form.mobile.trim() || !/^[6-9]\d{9}$/.test(form.mobile.replace(/\s/g,''))) e.mobile = 'Valid 10-digit mobile required';
+    if (!form.address.trim()) e.address = 'Address required';
+    return e;
+  }
+
+  function handleAppSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const errs = validateApp();
+    setAppErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+    saveApplication({ ...form });
+    setAppSubmitted(true);
+    setForm({ studentName:'', dob:'', gender:'', classApplying:'', stream:'', parentName:'', relation:'', mobile:'', email:'', address:'', previousSchool:'', message:'', interviewDate:'', interviewSlot:'', interviewMode:'' });
+  }
+
+  function handleFbSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const errs: Record<string, string> = {};
+    if (!fbName.trim() || fbName.length < 2) errs.name = 'Name is required';
+    if (!fbRole) errs.role = 'Please select your role';
+    if (fbRating === 0) errs.rating = 'Please select a rating';
+    if (!fbMessage.trim() || fbMessage.length < 5) errs.message = 'Please write your feedback';
+    setFbErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+    const entry = saveFeedback({ name: fbName, role: fbRole as FeedbackEntry['role'], category: 'overall', rating: fbRating, feedback: fbMessage });
+    setFeedbacks([entry, ...feedbacks]);
+    setFbSubmitted(true);
+    setFbName(''); setFbRole(''); setFbRating(0); setFbMessage('');
+  }
+
+  const showStream = form.classApplying === '11' || form.classApplying === '12';
+  const checkedCount = checked.filter(Boolean).length;
 
   return (
     <div className="flex flex-col">
-      {/* Page Header */}
+
+      {/* ── Page Header ── */}
       <div className="bg-primary pt-24 pb-16 px-4">
         <div className="container mx-auto text-center">
           <ScrollReveal>
-            <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4">Admissions</h1>
+            <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4">Admissions 2025–26</h1>
             <div className="w-24 h-1.5 bg-secondary mx-auto rounded-full"></div>
             <p className="mt-6 text-primary-foreground/80 text-lg max-w-2xl mx-auto">
               Join the BVPS family. Admissions open for Classes 1 to 12.
@@ -93,174 +286,487 @@ export default function Admissions() {
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4 md:px-6 max-w-5xl">
 
-          <div className="bg-white rounded-3xl p-8 md:p-12 border border-border shadow-lg mb-20 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
+          {/* ── Banner ── */}
+          <div className="bg-white rounded-3xl p-8 md:p-12 border border-border shadow-lg mb-16 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none" />
             <ScrollReveal>
               <div className="max-w-3xl">
-                <h2 className="text-3xl font-serif font-bold text-black mb-6">Start Your Child's Journey With Us</h2>
-                <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                  Bal Vikas Public School welcomes students from all backgrounds. We believe in providing equal opportunities for quality education. Admissions are currently open for <strong>Classes 1 through 12</strong>.
+                <h2 className="text-3xl font-serif font-bold text-black mb-4">Start Your Child's Journey With Us</h2>
+                <p className="text-lg text-muted-foreground leading-relaxed mb-5">
+                  Bal Vikas Public School welcomes students from all backgrounds. Admissions are open for <strong>Classes 1 through 12</strong> for the session 2025–26.
                 </p>
-                <div className="inline-flex items-center gap-3 px-4 py-3 bg-primary/5 rounded-xl text-primary font-medium border border-primary/10">
-                  <span className="flex h-2 w-2 rounded-full bg-secondary"></span>
-                  Please note: We do not offer Pre-primary classes. Admissions start directly from Class 1.
+                <div className="inline-flex items-center gap-3 px-4 py-3 bg-primary/5 rounded-xl text-primary font-medium border border-primary/10 text-sm">
+                  <span className="flex h-2 w-2 rounded-full bg-secondary animate-pulse" />
+                  We do not offer Pre-primary classes. Admissions start from Class 1.
                 </div>
               </div>
             </ScrollReveal>
           </div>
 
+          {/* ══════════════════════════════════════════════════
+              STEP 1 — ENQUIRY & INFORMATION
+          ══════════════════════════════════════════════════ */}
           <ScrollReveal>
-            <h2 className="text-3xl font-serif font-bold text-black mb-12 text-center">The Admission Process</h2>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-secondary text-primary flex items-center justify-center font-bold text-lg shrink-0">1</div>
+              <div>
+                <h2 className="text-2xl font-serif font-bold text-black">Enquiry & Information</h2>
+                <p className="text-muted-foreground text-sm">Click any card below to expand full details</p>
+              </div>
+            </div>
           </ScrollReveal>
 
-          <div className="relative">
-            <div className="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-border/60 -translate-y-1/2 z-0"></div>
-            <div className="grid md:grid-cols-4 gap-8 relative z-10">
-              {steps.map((step, idx) => (
-                <ScrollReveal key={idx} delay={idx * 0.1}>
-                  <div className="bg-white p-6 rounded-2xl border border-border shadow-sm h-full relative group hover:-translate-y-2 transition-transform duration-300">
-                    <div className="w-14 h-14 bg-secondary text-primary rounded-xl flex items-center justify-center mb-6 shadow-md shadow-secondary/30 group-hover:scale-110 transition-transform duration-300">
-                      <step.icon className="w-7 h-7" />
+          <div className="space-y-3 mb-16">
+            {enquiryItems.map((item, i) => (
+              <ScrollReveal key={item.title} delay={i * 0.07}>
+                <div className={`rounded-2xl border ${item.color} overflow-hidden`}>
+                  <button
+                    onClick={() => setOpenEnquiry(openEnquiry === i ? null : i)}
+                    className="w-full flex items-center gap-4 px-6 py-4 text-left hover:bg-black/5 transition-colors"
+                  >
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${item.iconColor} shrink-0`}>
+                      <item.icon className="w-5 h-5" />
                     </div>
-                    <h3 className="text-xl font-bold text-black mb-3">{step.title}</h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">{step.description}</p>
-                  </div>
-                </ScrollReveal>
-              ))}
+                    <span className="flex-1 font-bold text-black text-base">{item.title}</span>
+                    <motion.div animate={{ rotate: openEnquiry === i ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                      <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openEnquiry === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-6 pb-6 pt-2">
+                          {item.content}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+
+          {/* ══════════════════════════════════════════════════
+              STEP 2 — APPLICATION SUBMISSION FORM
+          ══════════════════════════════════════════════════ */}
+          <ScrollReveal>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-secondary text-primary flex items-center justify-center font-bold text-lg shrink-0">2</div>
+              <div>
+                <h2 className="text-2xl font-serif font-bold text-black">Application Submission</h2>
+                <p className="text-muted-foreground text-sm">Fill this form to register your admission enquiry</p>
+              </div>
             </div>
+          </ScrollReveal>
+
+          <ScrollReveal>
+            <div className="bg-white rounded-3xl border border-border shadow-lg p-8 md:p-10 mb-16">
+              {appSubmitted ? (
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="text-center py-12"
+                >
+                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
+                    <CheckCircle2 className="w-10 h-10 text-green-600" />
+                  </div>
+                  <h3 className="text-2xl font-serif font-bold text-black mb-3">Application Submitted!</h3>
+                  <p className="text-muted-foreground mb-2 max-w-md mx-auto">Thank you! Your admission enquiry has been recorded. Our team will contact you within <strong>1–2 working days</strong> on the mobile number provided.</p>
+                  <p className="text-sm text-muted-foreground mb-6">For urgent queries: <a href="tel:+919812550200" className="text-primary font-semibold">+91 98125 50200</a></p>
+                  <button onClick={() => setAppSubmitted(false)} className="inline-flex items-center gap-2 text-primary font-bold text-sm hover:text-secondary transition-colors border border-primary/20 rounded-full px-6 py-2.5">
+                    Submit Another Application
+                  </button>
+                </motion.div>
+              ) : (
+                <form onSubmit={handleAppSubmit} className="space-y-8">
+
+                  {/* Student Details */}
+                  <div>
+                    <h4 className="font-bold text-black mb-4 flex items-center gap-2 text-base">
+                      <User className="w-4 h-4 text-secondary" /> Student Details
+                    </h4>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="lg:col-span-2">
+                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Student Full Name *</label>
+                        <Input placeholder="e.g. Rahul Sharma" value={form.studentName} onChange={e => set('studentName', e.target.value)} />
+                        {appErrors.studentName && <p className="text-xs text-destructive mt-1">{appErrors.studentName}</p>}
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Date of Birth *</label>
+                        <Input type="date" value={form.dob} onChange={e => set('dob', e.target.value)} />
+                        {appErrors.dob && <p className="text-xs text-destructive mt-1">{appErrors.dob}</p>}
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Gender *</label>
+                        <Select value={form.gender} onValueChange={v => set('gender', v)}>
+                          <SelectTrigger><SelectValue placeholder="Select gender" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="male">Male</SelectItem>
+                            <SelectItem value="female">Female</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {appErrors.gender && <p className="text-xs text-destructive mt-1">{appErrors.gender}</p>}
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Class Applying For *</label>
+                        <Select value={form.classApplying} onValueChange={v => set('classApplying', v)}>
+                          <SelectTrigger><SelectValue placeholder="Select class" /></SelectTrigger>
+                          <SelectContent>
+                            {Array.from({ length: 12 }, (_, i) => i + 1).map(c => (
+                              <SelectItem key={c} value={String(c)}>Class {c}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {appErrors.classApplying && <p className="text-xs text-destructive mt-1">{appErrors.classApplying}</p>}
+                      </div>
+                      {showStream && (
+                        <div>
+                          <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Stream (Class 11–12)</label>
+                          <Select value={form.stream} onValueChange={v => set('stream', v)}>
+                            <SelectTrigger><SelectValue placeholder="Select stream" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="non-medical">Non-Medical (PCM)</SelectItem>
+                              <SelectItem value="medical">Medical (PCB)</SelectItem>
+                              <SelectItem value="commerce">Commerce</SelectItem>
+                              <SelectItem value="humanities">Humanities / Arts</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                      <div className="sm:col-span-2 lg:col-span-3">
+                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Previous School Name (if any)</label>
+                        <Input placeholder="e.g. Govt. Senior Secondary School, Kalayat" value={form.previousSchool} onChange={e => set('previousSchool', e.target.value)} />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Parent Details */}
+                  <div>
+                    <h4 className="font-bold text-black mb-4 flex items-center gap-2 text-base">
+                      <Briefcase className="w-4 h-4 text-secondary" /> Parent / Guardian Details
+                    </h4>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Parent / Guardian Name *</label>
+                        <Input placeholder="e.g. Suresh Kumar Sharma" value={form.parentName} onChange={e => set('parentName', e.target.value)} />
+                        {appErrors.parentName && <p className="text-xs text-destructive mt-1">{appErrors.parentName}</p>}
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Relation to Student</label>
+                        <Select value={form.relation} onValueChange={v => set('relation', v)}>
+                          <SelectTrigger><SelectValue placeholder="Select relation" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="father">Father</SelectItem>
+                            <SelectItem value="mother">Mother</SelectItem>
+                            <SelectItem value="guardian">Guardian</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Mobile Number *</label>
+                        <Input type="tel" placeholder="10-digit mobile" maxLength={10} value={form.mobile} onChange={e => set('mobile', e.target.value)} />
+                        {appErrors.mobile && <p className="text-xs text-destructive mt-1">{appErrors.mobile}</p>}
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Email (optional)</label>
+                        <Input type="email" placeholder="yourname@email.com" value={form.email} onChange={e => set('email', e.target.value)} />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Residential Address *</label>
+                        <Textarea placeholder="House No., Street, Village/Town, District, Pincode" value={form.address} onChange={e => set('address', e.target.value)} className="resize-none min-h-[80px]" />
+                        {appErrors.address && <p className="text-xs text-destructive mt-1">{appErrors.address}</p>}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Interview Preference */}
+                  <div>
+                    <h4 className="font-bold text-black mb-1 flex items-center gap-2 text-base">
+                      <Calendar className="w-4 h-4 text-secondary" /> Interview / Interaction Preference
+                    </h4>
+                    <p className="text-xs text-muted-foreground mb-4">Optional — our team will confirm your slot</p>
+                    <div className="grid sm:grid-cols-3 gap-4">
+                      <div>
+                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Preferred Date</label>
+                        <Input type="date" value={form.interviewDate} onChange={e => set('interviewDate', e.target.value)} min={new Date().toISOString().split('T')[0]} />
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Preferred Time Slot</label>
+                        <Select value={form.interviewSlot} onValueChange={v => set('interviewSlot', v)}>
+                          <SelectTrigger><SelectValue placeholder="Select slot" /></SelectTrigger>
+                          <SelectContent>
+                            {timeSlots.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Mode</label>
+                        <Select value={form.interviewMode} onValueChange={v => set('interviewMode', v)}>
+                          <SelectTrigger><SelectValue placeholder="How to meet?" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="in-person">In-Person (School Visit)</SelectItem>
+                            <SelectItem value="phone">Phone Call</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Message */}
+                  <div>
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Additional Message / Special Note</label>
+                    <Textarea placeholder="Any specific question, requirement, or information you'd like to share…" value={form.message} onChange={e => set('message', e.target.value)} className="resize-none min-h-[80px]" />
+                  </div>
+
+                  <Button type="submit" className="bg-secondary text-primary hover:bg-secondary/90 font-bold rounded-xl px-10 h-12 text-base gap-2 w-full sm:w-auto">
+                    <Send className="w-4 h-4" /> Submit Application
+                  </Button>
+                </form>
+              )}
+            </div>
+          </ScrollReveal>
+
+          {/* ══════════════════════════════════════════════════
+              STEP 3 — INTERVIEW / INTERACTION
+          ══════════════════════════════════════════════════ */}
+          <ScrollReveal>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-secondary text-primary flex items-center justify-center font-bold text-lg shrink-0">3</div>
+              <div>
+                <h2 className="text-2xl font-serif font-bold text-black">Interview / Interaction</h2>
+                <p className="text-muted-foreground text-sm">A brief, friendly interaction with the student and parents</p>
+              </div>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid md:grid-cols-2 gap-6 mb-6">
+            {/* What to expect */}
+            <ScrollReveal delay={0.05}>
+              <div className="bg-white rounded-2xl border border-border shadow-sm p-6 h-full">
+                <div className="flex items-center gap-2 mb-4">
+                  <Info className="w-5 h-5 text-secondary" />
+                  <h3 className="font-bold text-black text-base">What to Expect</h3>
+                </div>
+                <ul className="space-y-3">
+                  {[
+                    ['Duration', '15–20 minutes, relaxed conversation'],
+                    ['Who attends', 'Student + at least one parent/guardian'],
+                    ['Language', 'Hindi or English — your comfort'],
+                    ['Purpose', 'Understanding the child\'s learning needs'],
+                    ['No exam', 'Not a test — just a friendly interaction'],
+                  ].map(([key, val]) => (
+                    <li key={key} className="flex gap-3 text-sm">
+                      <span className="font-semibold text-black w-28 shrink-0">{key}</span>
+                      <span className="text-muted-foreground">{val}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </ScrollReveal>
+
+            {/* Interview modes */}
+            <ScrollReveal delay={0.1}>
+              <div className="bg-white rounded-2xl border border-border shadow-sm p-6 h-full">
+                <div className="flex items-center gap-2 mb-4">
+                  <Video className="w-5 h-5 text-secondary" />
+                  <h3 className="font-bold text-black text-base">Interaction Modes</h3>
+                </div>
+                <div className="space-y-3">
+                  {[
+                    { icon: Building2, mode: 'In-Person (Recommended)', detail: 'Visit school between 9 AM – 12 PM, Mon–Sat. Best to call ahead.' },
+                    { icon: PhoneCall, mode: 'Phone Call', detail: 'Our counselor will call on your mobile. Provide a preferred time in the form above.' },
+                  ].map(({ icon: Icon, mode, detail }) => (
+                    <div key={mode} className="flex gap-3 p-3 rounded-lg bg-muted/30 border border-border">
+                      <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center shrink-0">
+                        <Icon className="w-4 h-4 text-secondary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-black">{mode}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{detail}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </ScrollReveal>
+          </div>
+
+          {/* Tips for students and parents */}
+          <div className="grid md:grid-cols-2 gap-6 mb-16">
+            {interviewTips.map((t, i) => (
+              <ScrollReveal key={t.for} delay={i * 0.08}>
+                <div className={`rounded-2xl p-6 border ${i === 0 ? 'bg-primary border-primary/20' : 'bg-secondary/10 border-secondary/30'}`}>
+                  <h4 className={`font-bold mb-3 flex items-center gap-2 ${i === 0 ? 'text-white' : 'text-black'}`}>
+                    <CheckCircle2 className={`w-4 h-4 ${i === 0 ? 'text-secondary' : 'text-primary'}`} />
+                    Tips for {t.for}
+                  </h4>
+                  <ul className="space-y-2">
+                    {t.tips.map(tip => (
+                      <li key={tip} className={`text-sm flex items-start gap-2 ${i === 0 ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
+                        <span className={`mt-1 w-1.5 h-1.5 rounded-full shrink-0 ${i === 0 ? 'bg-secondary' : 'bg-primary'}`} />
+                        {tip}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+
+          {/* ══════════════════════════════════════════════════
+              STEP 4 — ENROLLMENT
+          ══════════════════════════════════════════════════ */}
+          <ScrollReveal>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-secondary text-primary flex items-center justify-center font-bold text-lg shrink-0">4</div>
+              <div>
+                <h2 className="text-2xl font-serif font-bold text-black">Enrollment</h2>
+                <p className="text-muted-foreground text-sm">Final step — complete formalities & join the BVPS family</p>
+              </div>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid md:grid-cols-2 gap-6 mb-16">
+            {/* Checklist */}
+            <ScrollReveal delay={0.05}>
+              <div className="bg-white rounded-2xl border border-border shadow-sm p-6 h-full">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-bold text-black flex items-center gap-2">
+                    <ClipboardList className="w-5 h-5 text-secondary" /> Enrollment Checklist
+                  </h3>
+                  <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${checkedCount === enrollmentItems.length ? 'bg-green-100 text-green-700' : 'bg-muted text-muted-foreground'}`}>
+                    {checkedCount}/{enrollmentItems.length} done
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground mb-4">Tick each item as you prepare it before coming to school.</p>
+                <ul className="space-y-2">
+                  {enrollmentItems.map((item, i) => (
+                    <li key={i}>
+                      <button
+                        onClick={() => setChecked(prev => prev.map((v, j) => j === i ? !v : v))}
+                        className="w-full flex items-start gap-3 text-left p-2.5 rounded-lg hover:bg-muted/30 transition-colors group"
+                      >
+                        {checked[i]
+                          ? <CheckSquare className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+                          : <Square className="w-5 h-5 text-muted-foreground/40 shrink-0 mt-0.5 group-hover:text-muted-foreground transition-colors" />
+                        }
+                        <span className={`text-sm transition-colors ${checked[i] ? 'text-muted-foreground line-through' : 'text-black'}`}>
+                          {item}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                {checkedCount === enrollmentItems.length && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                    className="mt-4 p-3 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm font-semibold flex items-center gap-2"
+                  >
+                    <CheckCircle2 className="w-5 h-5" /> You're all set! Visit school to complete enrollment.
+                  </motion.div>
+                )}
+              </div>
+            </ScrollReveal>
+
+            {/* Enrollment info */}
+            <ScrollReveal delay={0.1}>
+              <div className="space-y-4 h-full flex flex-col">
+                <div className="bg-white rounded-2xl border border-border shadow-sm p-6 flex-1">
+                  <h3 className="font-bold text-black mb-4 flex items-center gap-2">
+                    <IndianRupee className="w-5 h-5 text-secondary" /> Fee Payment Options
+                  </h3>
+                  <div className="space-y-3">
+                    {[
+                      { method: 'Cash', note: 'At the school office during working hours' },
+                      { method: 'UPI / Phone Pay / GPay', note: 'School UPI ID provided at office' },
+                      { method: 'Bank Transfer (NEFT)', note: 'Account details available at office' },
+                    ].map(({ method, note }) => (
+                      <div key={method} className="flex items-start gap-3 text-sm p-3 rounded-lg bg-muted/30 border border-border">
+                        <IndianRupee className="w-4 h-4 text-secondary mt-0.5 shrink-0" />
+                        <div>
+                          <p className="font-semibold text-black">{method}</p>
+                          <p className="text-xs text-muted-foreground">{note}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="bg-primary rounded-2xl p-6 text-white">
+                  <GraduationCap className="w-8 h-8 text-secondary mb-3" />
+                  <h4 className="font-bold text-lg mb-2">Welcome to BVPS!</h4>
+                  <p className="text-primary-foreground/75 text-sm leading-relaxed">
+                    Once enrolled, you'll receive the school diary, fee receipt, and a welcome letter. Your child's journey to excellence begins here.
+                  </p>
+                  <a href="tel:+919812550200" className="mt-4 inline-flex items-center gap-2 text-secondary font-semibold text-sm hover:underline">
+                    <Phone className="w-4 h-4" /> +91 98125 50200
+                  </a>
+                </div>
+              </div>
+            </ScrollReveal>
           </div>
 
           {/* ── Class 11 & 12 Streams ── */}
           <ScrollReveal>
-            <div className="mt-20 mb-6">
+            <div className="mb-6">
               <span className="text-secondary font-semibold uppercase tracking-widest text-sm">Senior Secondary</span>
               <h2 className="text-3xl font-serif font-bold text-black mt-1 mb-2">Streams for Class 11 & 12</h2>
-              <p className="text-muted-foreground max-w-2xl">Students joining Class 11 choose one of the following streams. Each stream is designed to align with future career goals.</p>
+              <p className="text-muted-foreground max-w-2xl">Students joining Class 11 choose one of the following streams.</p>
             </div>
           </ScrollReveal>
 
-          <div className="grid md:grid-cols-2 gap-6 mb-20">
-            {/* Non-Medical */}
-            <ScrollReveal delay={0.05}>
-              <div className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden h-full">
-                <div className="bg-primary px-6 py-4 flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center shrink-0">
-                    <GraduationCap className="w-5 h-5 text-primary" />
+          <div className="grid md:grid-cols-2 gap-6 mb-16">
+            {[
+              { name: 'Non-Medical', compulsory: ['English Core', 'Physics', 'Chemistry', 'Biology / Mathematics'], optional: 'Fine Arts · Design · Physical Education · Artificial Intelligence', optLabel: 'Optional (Choose one)' },
+              { name: 'Medical', compulsory: ['English Core', 'Physics', 'Chemistry', 'Biology'], optional: 'Fine Arts · Design · Physical Education · Artificial Intelligence', optLabel: 'Optional (Choose one)' },
+              { name: 'Commerce', compulsory: ['English Core', 'Accountancy', 'Business Studies', 'Economics'], optional: 'Fine Arts · Design · Physical Education · Artificial Intelligence', optLabel: '5th & 6th Subject (Choose one each)' },
+              { name: 'Humanities', compulsory: ['English Core'], optional: 'Hindi · Political Science · Mathematics · History · Economics · Geography', optLabel: 'Choose any FOUR compulsory + one additional' },
+            ].map(stream => (
+              <ScrollReveal key={stream.name} delay={0.05}>
+                <div className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden h-full">
+                  <div className="bg-primary px-6 py-4 flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center shrink-0">
+                      <GraduationCap className="w-5 h-5 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-serif font-bold text-white">Stream: {stream.name}</h3>
                   </div>
-                  <h3 className="text-lg font-serif font-bold text-white">Stream: Non-Medical</h3>
-                </div>
-                <div className="divide-y divide-border">
-                  <div className="px-6 py-4">
-                    <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">Compulsory Subjects</p>
-                    <ul className="space-y-1 text-sm text-muted-foreground">
-                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />English Core</li>
-                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />Physics</li>
-                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />Chemistry</li>
-                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />Biology / Mathematics</li>
-                    </ul>
-                  </div>
-                  <div className="px-6 py-4 bg-muted/30">
-                    <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">Optional Subjects <span className="text-muted-foreground font-normal normal-case tracking-normal">(Choose one)</span></p>
-                    <p className="text-sm text-muted-foreground">Fine Arts (Painting) · Design · Physical Education · Artificial Intelligence</p>
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
-
-            {/* Medical */}
-            <ScrollReveal delay={0.1}>
-              <div className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden h-full">
-                <div className="bg-primary px-6 py-4 flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center shrink-0">
-                    <GraduationCap className="w-5 h-5 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-serif font-bold text-white">Stream: Medical</h3>
-                </div>
-                <div className="divide-y divide-border">
-                  <div className="px-6 py-4">
-                    <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">Compulsory Subjects</p>
-                    <ul className="space-y-1 text-sm text-muted-foreground">
-                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />English Core</li>
-                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />Physics</li>
-                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />Chemistry</li>
-                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />Biology</li>
-                    </ul>
-                  </div>
-                  <div className="px-6 py-4 bg-muted/30">
-                    <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">Optional Subjects <span className="text-muted-foreground font-normal normal-case tracking-normal">(Choose one)</span></p>
-                    <p className="text-sm text-muted-foreground">Fine Arts (Painting) · Design · Physical Education · Artificial Intelligence</p>
+                  <div className="divide-y divide-border">
+                    <div className="px-6 py-4">
+                      <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">Compulsory Subjects</p>
+                      <ul className="space-y-1">
+                        {stream.compulsory.map(s => (
+                          <li key={s} className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />{s}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="px-6 py-4 bg-muted/30">
+                      <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-1">{stream.optLabel}</p>
+                      <p className="text-sm text-muted-foreground">{stream.optional}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </ScrollReveal>
-
-            {/* Commerce */}
-            <ScrollReveal delay={0.15}>
-              <div className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden h-full">
-                <div className="bg-primary px-6 py-4 flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center shrink-0">
-                    <GraduationCap className="w-5 h-5 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-serif font-bold text-white">Stream: Commerce</h3>
-                </div>
-                <div className="divide-y divide-border">
-                  <div className="px-6 py-4">
-                    <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">Compulsory Subjects</p>
-                    <ul className="space-y-1 text-sm text-muted-foreground">
-                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />English Core</li>
-                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />Accountancy</li>
-                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />Business Studies</li>
-                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />Economics</li>
-                    </ul>
-                  </div>
-                  <div className="px-6 py-4 bg-muted/30">
-                    <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">5th Compulsory Subject <span className="text-muted-foreground font-normal normal-case tracking-normal">(Tick any ONE)</span></p>
-                    <p className="text-sm text-muted-foreground mb-3">Fine Arts (Painting) · Design · Physical Education · Artificial Intelligence</p>
-                    <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">6th Additional Subject <span className="text-muted-foreground font-normal normal-case tracking-normal">(Tick any ONE)</span></p>
-                    <p className="text-sm text-muted-foreground">Fine Arts (Painting) · Design · Physical Education · Artificial Intelligence</p>
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
-
-            {/* Humanities */}
-            <ScrollReveal delay={0.2}>
-              <div className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden h-full">
-                <div className="bg-primary px-6 py-4 flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center shrink-0">
-                    <GraduationCap className="w-5 h-5 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-serif font-bold text-white">Stream: Humanities</h3>
-                </div>
-                <div className="divide-y divide-border">
-                  <div className="px-6 py-4">
-                    <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">Compulsory Subject</p>
-                    <ul className="space-y-1 text-sm text-muted-foreground">
-                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />English Core</li>
-                    </ul>
-                  </div>
-                  <div className="px-6 py-4">
-                    <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">Optional Compulsory Subjects <span className="text-muted-foreground font-normal normal-case tracking-normal">(Tick any FOUR)</span></p>
-                    <p className="text-sm text-muted-foreground">Hindi · Political Science · Mathematics · History · Economics · Geography</p>
-                  </div>
-                  <div className="px-6 py-4 bg-muted/30">
-                    <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">6th Additional Subject <span className="text-muted-foreground font-normal normal-case tracking-normal">(Tick any ONE)</span></p>
-                    <p className="text-sm text-muted-foreground">Fine Arts (Painting) · Design · Physical Education · Artificial Intelligence</p>
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
+              </ScrollReveal>
+            ))}
           </div>
 
-          <ScrollReveal delay={0.4} className="mt-0 text-center">
-            <div className="bg-primary text-white rounded-3xl p-10 shadow-xl max-w-3xl mx-auto">
-              <h3 className="text-2xl font-serif font-bold mb-4">Have Questions?</h3>
-              <p className="text-primary-foreground/80 mb-8">Our admission counselors are here to help you through every step of the process.</p>
+          {/* ── Have Questions ── */}
+          <ScrollReveal>
+            <div className="bg-primary text-white rounded-3xl p-10 shadow-xl max-w-3xl mx-auto text-center">
+              <h3 className="text-2xl font-serif font-bold mb-3">Have Questions?</h3>
+              <p className="text-primary-foreground/80 mb-8">Our admission counselors are here to help you through every step.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="tel:+919812550200" className="inline-flex w-full sm:w-auto items-center justify-center h-12 bg-secondary text-primary hover:bg-secondary/90 font-bold rounded-full px-8 gap-2 transition-colors">
                   <Phone className="w-5 h-5" /> Call +91 98125 50200
                 </a>
-                <Link href="/contact" className="inline-flex w-full sm:w-auto items-center justify-center h-12 border border-white text-white hover:bg-white hover:text-primary font-bold rounded-full px-8 backdrop-blur-sm bg-white/10 transition-colors gap-2">
+                <Link href="/contact" className="inline-flex w-full sm:w-auto items-center justify-center h-12 border border-white text-white hover:bg-white hover:text-primary font-bold rounded-full px-8 bg-white/10 transition-colors gap-2">
                   Message Us <ArrowRight className="w-5 h-5" />
                 </Link>
               </div>
@@ -270,38 +776,33 @@ export default function Admissions() {
         </div>
       </section>
 
-      {/* ── Compact Feedback Section ── */}
+      {/* ── Feedback Section ── */}
       <section className="py-16 bg-muted/40 border-t border-border">
         <div className="container mx-auto px-4 md:px-6 max-w-4xl">
-
-          {/* Inline feedback form */}
           <ScrollReveal>
             <div className="bg-white rounded-2xl border border-border shadow-sm p-6 md:p-8 mb-10">
               <div className="flex items-center gap-2 mb-6">
                 <MessageSquare className="w-5 h-5 text-secondary" />
                 <h3 className="text-xl font-serif font-bold text-black">Share Your Feedback</h3>
               </div>
-
-              {submitted ? (
+              {fbSubmitted ? (
                 <div className="flex items-center gap-3 py-4 text-green-700">
                   <CheckCircle2 className="w-6 h-6 shrink-0" />
                   <div>
                     <p className="font-semibold">Thank you for your feedback!</p>
-                    <button className="text-sm underline mt-0.5 text-green-600" onClick={() => setSubmitted(false)}>Submit another</button>
+                    <button className="text-sm underline mt-0.5 text-green-600" onClick={() => setFbSubmitted(false)}>Submit another</button>
                   </div>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleFbSubmit} className="space-y-4">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <Input placeholder="Your name" value={name} onChange={e => setName(e.target.value)} className="rounded-lg" />
-                      {errors.name && <p className="text-xs text-destructive mt-1">{errors.name}</p>}
+                      <Input placeholder="Your name" value={fbName} onChange={e => setFbName(e.target.value)} />
+                      {fbErrors.name && <p className="text-xs text-destructive mt-1">{fbErrors.name}</p>}
                     </div>
                     <div>
-                      <Select value={role} onValueChange={v => setRole(v as FeedbackEntry['role'])}>
-                        <SelectTrigger className="rounded-lg">
-                          <SelectValue placeholder="You are a…" />
-                        </SelectTrigger>
+                      <Select value={fbRole} onValueChange={v => setFbRole(v as FeedbackEntry['role'])}>
+                        <SelectTrigger><SelectValue placeholder="You are a…" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="parent">Parent / Guardian</SelectItem>
                           <SelectItem value="student">Student</SelectItem>
@@ -309,20 +810,17 @@ export default function Admissions() {
                           <SelectItem value="visitor">Visitor</SelectItem>
                         </SelectContent>
                       </Select>
-                      {errors.role && <p className="text-xs text-destructive mt-1">{errors.role}</p>}
+                      {fbErrors.role && <p className="text-xs text-destructive mt-1">{fbErrors.role}</p>}
                     </div>
                   </div>
-
                   <div>
-                    <StarPicker value={rating} onChange={setRating} />
-                    {errors.rating && <p className="text-xs text-destructive mt-1">{errors.rating}</p>}
+                    <StarPicker value={fbRating} onChange={setFbRating} />
+                    {fbErrors.rating && <p className="text-xs text-destructive mt-1">{fbErrors.rating}</p>}
                   </div>
-
                   <div>
-                    <Textarea placeholder="Write your feedback here…" value={message} onChange={e => setMessage(e.target.value)} className="rounded-lg min-h-[90px] resize-none" />
-                    {errors.message && <p className="text-xs text-destructive mt-1">{errors.message}</p>}
+                    <Textarea placeholder="Write your feedback here…" value={fbMessage} onChange={e => setFbMessage(e.target.value)} className="min-h-[90px] resize-none" />
+                    {fbErrors.message && <p className="text-xs text-destructive mt-1">{fbErrors.message}</p>}
                   </div>
-
                   <Button type="submit" className="bg-secondary text-primary hover:bg-secondary/90 font-bold rounded-lg px-8">
                     Submit Feedback
                   </Button>
@@ -331,7 +829,6 @@ export default function Admissions() {
             </div>
           </ScrollReveal>
 
-          {/* All submitted feedbacks */}
           {feedbacks.length > 0 && (
             <>
               <ScrollReveal>
@@ -360,7 +857,6 @@ export default function Admissions() {
               </div>
             </>
           )}
-
         </div>
       </section>
     </div>
