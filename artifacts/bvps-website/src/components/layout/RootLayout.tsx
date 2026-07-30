@@ -14,8 +14,11 @@ export function RootLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-[100dvh] flex flex-col font-sans text-foreground">
-      <FloatingContact />
-      <Navbar />
+      {/* Sticky header: top info bar + navbar together */}
+      <div className="sticky top-0 z-50">
+        <FloatingContact />
+        <Navbar />
+      </div>
       <main className="flex-1">
         <AnimatePresence mode="wait">
           <motion.div

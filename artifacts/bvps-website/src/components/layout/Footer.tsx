@@ -83,11 +83,11 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3 text-sm text-primary-foreground/80">
                 <Phone className="w-5 h-5 text-secondary shrink-0" />
-                <span>+91 98125 50200</span>
+                <a href="tel:+919812550200" className="hover:text-secondary transition-colors">+91 98125 50200</a>
               </li>
               <li className="flex items-center gap-3 text-sm text-primary-foreground/80">
                 <Mail className="w-5 h-5 text-secondary shrink-0" />
-                <span>info@bvpskalayat.edu</span>
+                <a href="mailto:info@bvpskalayat.edu" className="hover:text-secondary transition-colors">info@bvpskalayat.edu</a>
               </li>
             </ul>
           </div>

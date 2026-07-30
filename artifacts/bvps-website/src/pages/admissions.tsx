@@ -174,7 +174,7 @@ const enquiryItems = [
 
 /* ─── Interview tips ────────────────────────────────────── */
 const interviewTips = [
-  { for: 'Student', tips: ['Dress in clean school uniform', 'Be polite and confident', 'Know your previous class subjects', 'Carry your report card'] },
+  { for: 'Student', tips: ['Dress in school uniform: white shirt, black pants, black shoes', 'Be polite and confident', 'Know your previous class subjects', 'Carry your report card'] },
   { for: 'Parents', tips: ['Bring all required documents', 'Be ready to discuss child\'s strengths', 'Ask about curriculum and fee schedule', 'Note the school rules and calendar'] },
 ];
 
@@ -190,7 +190,7 @@ const enrollmentItems = [
   'Medical fitness certificate (if required)',
   '4 passport-size photographs',
   'Previous school TC (Transfer Certificate)',
-  'School uniform purchase from approved vendor',
+  'School uniform: white shirt, black pants & black shoes (from approved vendor)',
   'School diary & stationery as per class list',
 ];
 
@@ -683,19 +683,45 @@ export default function Admissions() {
                     <IndianRupee className="w-5 h-5 text-secondary" /> Fee Payment Options
                   </h3>
                   <div className="space-y-3">
-                    {[
-                      { method: 'Cash', note: 'At the school office during working hours' },
-                      { method: 'UPI / Phone Pay / GPay', note: 'School UPI ID provided at office' },
-                      { method: 'Bank Transfer (NEFT)', note: 'Account details available at office' },
-                    ].map(({ method, note }) => (
-                      <div key={method} className="flex items-start gap-3 text-sm p-3 rounded-lg bg-muted/30 border border-border">
-                        <IndianRupee className="w-4 h-4 text-secondary mt-0.5 shrink-0" />
+                    {/* Cash */}
+                    <div className="flex items-start gap-3 text-sm p-3 rounded-lg bg-muted/30 border border-border">
+                      <IndianRupee className="w-4 h-4 text-secondary mt-0.5 shrink-0" />
+                      <div>
+                        <p className="font-semibold text-black">Cash</p>
+                        <p className="text-xs text-muted-foreground">At the school office during working hours (Mon–Sat, 9 AM – 2 PM)</p>
+                      </div>
+                    </div>
+
+                    {/* UPI */}
+                    <a
+                      href="upi://pay?pa=bvpskalayat@sbi&pn=Bal%20Vikas%20Public%20School&cu=INR"
+                      className="flex items-start gap-3 text-sm p-3 rounded-lg bg-green-50 border border-green-200 hover:bg-green-100 transition-colors cursor-pointer group"
+                    >
+                      <IndianRupee className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
+                      <div className="flex-1">
+                        <p className="font-semibold text-black group-hover:text-green-700">UPI / PhonePe / GPay / Paytm</p>
+                        <p className="text-xs text-muted-foreground">UPI ID: <span className="font-mono font-bold text-green-700">bvpskalayat@sbi</span></p>
+                        <p className="text-xs text-green-600 font-semibold mt-0.5">Tap to open payment app →</p>
+                      </div>
+                    </a>
+
+                    {/* Bank Transfer */}
+                    <div className="text-sm rounded-lg border border-blue-200 overflow-hidden">
+                      <div className="flex items-start gap-3 p-3 bg-blue-50">
+                        <IndianRupee className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
                         <div>
-                          <p className="font-semibold text-black">{method}</p>
-                          <p className="text-xs text-muted-foreground">{note}</p>
+                          <p className="font-semibold text-black">Bank Transfer (NEFT / IMPS)</p>
+                          <p className="text-xs text-muted-foreground mb-2">Transfer directly to school's bank account:</p>
+                          <div className="space-y-1 text-xs">
+                            <p><span className="font-bold text-black">Bank:</span> State Bank of India, Kalayat</p>
+                            <p><span className="font-bold text-black">A/C Name:</span> Bal Vikas Public School</p>
+                            <p><span className="font-bold text-black">A/C No.:</span> 39248675012</p>
+                            <p><span className="font-bold text-black">IFSC:</span> SBIN0009876</p>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1.5 italic">* Please share transaction ID at office after transfer.</p>
                         </div>
                       </div>
-                    ))}
+                    </div>
                   </div>
                 </div>
                 <div className="bg-primary rounded-2xl p-6 text-white">
