@@ -1,4 +1,4 @@
-import { Phone, Clock, MapPin } from 'lucide-react';
+import { Phone, Clock, MapPin, Hash } from 'lucide-react';
 
 export function FloatingContact() {
   return (
@@ -12,6 +12,10 @@ export function FloatingContact() {
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-secondary" />
             <span>Mon–Sat: 8:00 AM – 3:00 PM</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Hash className="w-4 h-4 text-secondary" />
+            <span>School Code: <span className="font-bold text-secondary">06050300920</span></span>
           </div>
         </div>
         <a href="tel:+919812550200" className="flex items-center gap-2 font-bold tracking-wider hover:text-secondary transition-colors">
