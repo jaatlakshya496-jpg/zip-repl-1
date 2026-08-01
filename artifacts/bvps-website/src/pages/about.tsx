@@ -54,8 +54,10 @@ export default function About() {
   return (
     <div className="flex flex-col">
       {/* Page Header */}
-      <div className="bg-primary pt-24 pb-16 px-4">
-        <div className="container mx-auto text-center">
+      <div className="bg-primary pt-24 pb-16 px-4 relative overflow-hidden">
+        <img src={aboutImg} alt="" className="absolute inset-0 w-full h-full object-cover object-center opacity-100" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/30 to-primary/55" />
+        <div className="container mx-auto text-center relative z-10">
           <ScrollReveal>
             <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4">About BVPS</h1>
             <div className="w-24 h-1.5 bg-secondary mx-auto rounded-full"></div>
