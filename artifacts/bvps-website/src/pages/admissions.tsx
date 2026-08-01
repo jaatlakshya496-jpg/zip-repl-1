@@ -129,8 +129,8 @@ export default function Admissions() {
     <div className="flex flex-col">
       {/* Header */}
       <div className="bg-primary pt-24 pb-16 px-4 relative overflow-hidden">
-        <img src={heroImg} alt="" className="absolute inset-0 w-full h-full object-cover object-center opacity-20" />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/80 to-primary/95" />
+        <img src={heroImg} alt="" className="absolute inset-0 w-full h-full object-cover object-center opacity-40" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/50 to-primary/80" />
         <div className="container mx-auto text-center relative z-10">
           <ScrollReveal>
             <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4">Admissions 2025–26</h1>
