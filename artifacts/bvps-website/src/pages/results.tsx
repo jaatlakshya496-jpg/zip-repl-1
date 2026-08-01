@@ -373,54 +373,92 @@ export default function Results() {
       </div>
 
       {/* ── Grid ── */}
-      <section className="py-16 bg-background flex-1">
-        <div className="container mx-auto px-4 md:px-6 max-w-6xl">
+      <section className="py-16 flex-1"
+        style={{ background: 'linear-gradient(135deg, #0f0c29 0%, #1a1a2e 50%, #16213e 100%)' }}>
+        <div className="container mx-auto px-4 md:px-6 max-w-7xl">
           <AnimatePresence mode="wait">
             <motion.div
               key={`${sportFilter}-${levelFilter}`}
               initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-10 }}
-              transition={{ duration:0.25 }}
-              className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+              transition={{ duration:0.3 }}
+              className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             >
               {filtered.map((item, i) => {
-                const sc = SPORT_COLORS[item.sport];
-                const pb = posBadge(item.position);
+                const sc   = SPORT_COLORS[item.sport];
+                const pb   = posBadge(item.position);
+                const medal =
+                  item.position === 'Winners' || item.position === 'Champions' ? '🏆'
+                  : item.position === '1st'   ? '🥇'
+                  : item.position === '2nd'   ? '🥈'
+                  : item.position === '3rd'   ? '🥉'
+                  : '⭐';
                 return (
                   <motion.div key={item.id}
-                    initial={{ opacity:0, scale:0.92 }} animate={{ opacity:1, scale:1 }}
-                    transition={{ delay:i*0.04 }}
-                    whileHover={{ y:-6 }}
+                    initial={{ opacity:0, y:40 }} animate={{ opacity:1, y:0 }}
+                    transition={{ delay: i * 0.05, type: 'spring', stiffness: 200, damping: 20 }}
+                    whileHover={{ y: -10, scale: 1.02 }}
                     onClick={() => setSelected(item)}
-                    className="bg-white rounded-2xl overflow-hidden border border-border shadow-md cursor-pointer group flex flex-col"
+                    className="relative rounded-3xl overflow-hidden cursor-pointer group shadow-2xl"
+                    style={{ aspectRatio: '3/4' }}
                   >
-                    {/* ── TOP: sport banner + position badge ── */}
-                    <div className={`${sc.banner} ${sc.text} px-3 py-2 flex items-center justify-between gap-2`}>
-                      <span className="text-xs font-bold truncate">{item.sportLabel}</span>
-                      <span className={`shrink-0 text-xs font-extrabold px-2.5 py-0.5 rounded-full ${pb.bg} ${pb.text}`}>
-                        {item.position}
+                    {/* Full-bleed image */}
+                    <img src={item.img} alt={item.title}
+                      className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700 ease-out" />
+
+                    {/* Dark gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-black/10 group-hover:from-black/98 transition-all duration-500" />
+
+                    {/* Sport-colored top accent line */}
+                    <div className={`absolute top-0 left-0 right-0 h-1 ${sc.banner} opacity-90`} />
+
+                    {/* Sport-colored glow border on hover */}
+                    <div className={`absolute inset-0 rounded-3xl ring-0 group-hover:ring-2 ring-white/20 transition-all duration-300`} />
+
+                    {/* Top-left: sport label pill (glassmorphism) */}
+                    <div className="absolute top-4 left-4">
+                      <span className="text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-md bg-black/40 text-white border border-white/20 shadow-lg">
+                        {item.sportLabel}
                       </span>
                     </div>
 
-                    {/* ── Image ── */}
-                    <div className="relative overflow-hidden" style={{ aspectRatio:'4/5' }}>
-                      <img src={item.img} alt={item.title}
-                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" />
-                      <div className={`absolute inset-0 bg-gradient-to-t ${sc.banner} opacity-10 group-hover:opacity-20 transition-opacity`} />
+                    {/* Top-right: medal badge */}
+                    <div className="absolute top-3 right-3">
+                      <motion.div
+                        whileHover={{ rotate: [0, -10, 10, 0], scale: 1.15 }}
+                        transition={{ duration: 0.4 }}
+                        className={`w-11 h-11 rounded-full flex items-center justify-center text-lg shadow-2xl ${pb.bg} ${pb.text} ring-2 ring-white/60 backdrop-blur-sm`}
+                      >
+                        {medal}
+                      </motion.div>
                     </div>
 
-                    {/* ── Info ── */}
-                    <div className="px-4 pt-3 pb-2 flex-1">
-                      <h3 className="font-bold text-black text-sm leading-snug">{item.title}</h3>
-                      <p className="text-xs text-muted-foreground mt-0.5">{item.name}</p>
-                    </div>
-
-                    {/* ── BOTTOM: score strip (sport colour) ── */}
-                    <div className={`${sc.stripe} ${sc.text} px-4 py-2.5 flex items-center justify-between`}>
-                      <span className="text-xs font-medium opacity-80">{item.level} Level</span>
-                      <span className={`text-xs font-extrabold px-2.5 py-0.5 rounded-full ${pb.bg} ${pb.text}`}>
-                        {item.score.replace(/^[^\s]+\s/, '')}
+                    {/* Bottom info panel */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-400">
+                      {/* Level + sport */}
+                      <p className="text-white/60 text-[11px] font-semibold uppercase tracking-wider mb-1">
+                        {item.level} Level
+                      </p>
+                      {/* Title */}
+                      <h3 className="text-white font-bold text-sm leading-snug mb-1">
+                        {item.title}
+                      </h3>
+                      {/* Name */}
+                      <p className="text-white/55 text-xs mb-3">{item.name}</p>
+                      {/* Score pill */}
+                      <span className={`inline-flex items-center gap-1 text-xs font-extrabold px-3 py-1.5 rounded-full ${pb.bg} ${pb.text} shadow-lg`}>
+                        {item.score}
                       </span>
                     </div>
+
+                    {/* Hover: "Tap to view" indicator */}
+                    <motion.div
+                      className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      style={{ pointerEvents: 'none' }}
+                    >
+                      <div className="bg-white/15 backdrop-blur-sm border border-white/30 text-white text-xs font-bold px-5 py-2.5 rounded-full shadow-xl tracking-wide">
+                        ✨ View Details
+                      </div>
+                    </motion.div>
                   </motion.div>
                 );
               })}
@@ -428,9 +466,9 @@ export default function Results() {
           </AnimatePresence>
 
           {filtered.length === 0 && (
-            <div className="text-center py-20 text-muted-foreground">
-              <Trophy className="w-12 h-12 mx-auto mb-3 opacity-20" />
-              <p>No achievements found for this filter.</p>
+            <div className="text-center py-24 text-white/40">
+              <Trophy className="w-14 h-14 mx-auto mb-4 opacity-20" />
+              <p className="text-lg font-semibold">No achievements found for this filter.</p>
             </div>
           )}
         </div>
@@ -440,47 +478,81 @@ export default function Results() {
       <AnimatePresence>
         {selected && (
           <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
-            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(20px)' }}
             onClick={() => setSelected(null)}
           >
             <motion.div
-              initial={{ scale:0.85, opacity:0 }} animate={{ scale:1, opacity:1 }}
-              exit={{ scale:0.85, opacity:0 }}
-              transition={{ type:'spring', stiffness:300, damping:25 }}
-              className="bg-white rounded-3xl overflow-hidden max-w-sm w-full shadow-2xl"
+              initial={{ scale:0.80, opacity:0, y:40 }}
+              animate={{ scale:1, opacity:1, y:0 }}
+              exit={{ scale:0.80, opacity:0, y:40 }}
+              transition={{ type:'spring', stiffness:260, damping:22 }}
+              className="relative w-full max-w-3xl rounded-3xl overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.9)]"
               onClick={e => e.stopPropagation()}
             >
               {(() => {
                 const sc = SPORT_COLORS[selected.sport];
                 const pb = posBadge(selected.position);
-                return <>
-                  {/* top banner */}
-                  <div className={`${sc.banner} ${sc.text} px-6 py-3 flex items-center justify-between`}>
-                    <span className="font-bold text-sm">{selected.sportLabel}</span>
-                    <span className={`text-sm font-extrabold px-3 py-1 rounded-full ${pb.bg} ${pb.text}`}>
-                      {selected.position}
-                    </span>
+                const medal =
+                  selected.position === 'Winners' || selected.position === 'Champions' ? '🏆'
+                  : selected.position === '1st'   ? '🥇'
+                  : selected.position === '2nd'   ? '🥈'
+                  : selected.position === '3rd'   ? '🥉'
+                  : '⭐';
+                return (
+                  <div className="flex flex-col md:flex-row">
+                    {/* Left: image */}
+                    <div className="relative md:w-[55%] shrink-0" style={{ minHeight: 320 }}>
+                      <img src={selected.img} alt={selected.title}
+                        className="w-full h-full object-cover object-top"
+                        style={{ maxHeight: 520 }} />
+                      {/* Gradient over image */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:to-black/30" />
+                      {/* Close btn */}
+                      <button onClick={() => setSelected(null)}
+                        className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/90 transition-colors border border-white/20">
+                        <X className="w-4 h-4" />
+                      </button>
+                      {/* Medal on image */}
+                      <div className="absolute bottom-4 left-4">
+                        <div className={`text-4xl drop-shadow-2xl`}>{medal}</div>
+                      </div>
+                    </div>
+
+                    {/* Right: info */}
+                    <div className="flex-1 flex flex-col"
+                      style={{ background: 'linear-gradient(160deg, #1a1a2e 0%, #0f0c29 100%)' }}>
+                      {/* Sport header */}
+                      <div className={`${sc.banner} px-6 py-3 flex items-center justify-between`}>
+                        <span className={`font-bold text-sm ${sc.text}`}>{selected.sportLabel}</span>
+                        <span className={`text-xs font-extrabold px-3 py-1 rounded-full ${pb.bg} ${pb.text} shadow-md`}>
+                          {selected.position}
+                        </span>
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                          <p className="text-white/50 text-xs uppercase tracking-widest font-semibold mb-2">
+                            {selected.level} Level Achievement
+                          </p>
+                          <h3 className="text-xl font-serif font-bold text-white mb-2 leading-snug">
+                            {selected.title}
+                          </h3>
+                          <p className="text-secondary font-semibold text-base mb-3">{selected.name}</p>
+                          <p className="text-white/60 text-sm leading-relaxed">{selected.detail}</p>
+                        </div>
+
+                        {/* Score badge */}
+                        <div className="mt-6">
+                          <div className={`inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-extrabold text-sm ${pb.bg} ${pb.text} shadow-xl`}>
+                            {selected.score} 🎉
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  {/* image */}
-                  <div className="relative">
-                    <img src={selected.img} alt={selected.title}
-                      className="w-full object-cover object-top" style={{ maxHeight:360 }} />
-                    <button onClick={() => setSelected(null)}
-                      className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-colors">
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                  {/* info */}
-                  <div className="p-6">
-                    <h3 className="text-xl font-serif font-bold text-black mb-1">{selected.title}</h3>
-                    <p className="text-base font-semibold text-primary">{selected.name}</p>
-                    <p className="text-sm text-muted-foreground mt-1">{selected.detail}</p>
-                  </div>
-                  {/* score footer */}
-                  <div className={`${sc.stripe} ${sc.text} px-6 py-3 text-center font-extrabold`}>
-                    {selected.score} 🎉
-                  </div>
-                </>;
+                );
               })()}
             </motion.div>
           </motion.div>
