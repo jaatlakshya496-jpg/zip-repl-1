@@ -25,8 +25,8 @@ export default function Enrollment() {
   return (
     <div className="flex flex-col">
       <div className="bg-primary pt-24 pb-16 px-4 relative overflow-hidden">
-        <img src={heroImg} alt="" className="absolute inset-0 w-full h-full object-cover object-center opacity-40" />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/50 to-primary/80" />
+        <img src={heroImg} alt="" className="absolute inset-0 w-full h-full object-cover object-center opacity-100" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/30 to-primary/55" />
         <div className="container mx-auto text-center relative z-10">
           <ScrollReveal>
             <span className="text-secondary font-semibold uppercase tracking-widest text-sm">Admissions</span>
