@@ -39,6 +39,7 @@ export function Navbar() {
     { name: 'Home', path: '/' },
     { name: 'About Us', path: '/about' },
     { name: 'Facilities', path: '/facilities' },
+    { name: 'Results', path: '/results' },
     { name: 'Gallery', path: '/gallery' },
     { name: 'Contact', path: '/contact' },
   ];
