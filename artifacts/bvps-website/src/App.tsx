@@ -14,6 +14,15 @@ import Contact from '@/pages/contact';
 import Gallery from '@/pages/gallery';
 import Feedback from '@/pages/feedback';
 
+// Admissions sub-pages
+import FeeStructure from '@/pages/fee-structure';
+import Application from '@/pages/application';
+import Interview from '@/pages/interview';
+import SchoolTiming from '@/pages/school-timing';
+import Enrollment from '@/pages/enrollment';
+import Streams from '@/pages/streams';
+import PrincipalMessage from '@/pages/principal-message';
+
 const queryClient = new QueryClient();
 
 function Router() {
@@ -27,6 +36,14 @@ function Router() {
         <Route path="/contact" component={Contact} />
         <Route path="/gallery" component={Gallery} />
         <Route path="/feedback" component={Feedback} />
+        {/* Admissions sub-pages */}
+        <Route path="/fee-structure" component={FeeStructure} />
+        <Route path="/application" component={Application} />
+        <Route path="/interview" component={Interview} />
+        <Route path="/school-timing" component={SchoolTiming} />
+        <Route path="/enrollment" component={Enrollment} />
+        <Route path="/streams" component={Streams} />
+        <Route path="/principal-message" component={PrincipalMessage} />
         <Route component={NotFound} />
       </Switch>
     </RootLayout>
