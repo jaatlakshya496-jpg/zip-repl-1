@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
 import { Button } from '@/components/ui/button';
+import heroImg from '@assets/generated_images/about-classroom.jpg';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -95,8 +96,10 @@ export default function Feedback() {
   return (
     <div className="flex flex-col">
       {/* Page Header */}
-      <div className="bg-primary pt-24 pb-16 px-4">
-        <div className="container mx-auto text-center">
+      <div className="bg-primary pt-24 pb-16 px-4 relative overflow-hidden">
+        <img src={heroImg} alt="" className="absolute inset-0 w-full h-full object-cover object-center opacity-20" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/80 to-primary/95" />
+        <div className="container mx-auto text-center relative z-10">
           <ScrollReveal>
             <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4">
               Share Your Feedback
