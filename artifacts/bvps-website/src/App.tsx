@@ -14,6 +14,8 @@ import Contact from '@/pages/contact';
 import Gallery from '@/pages/gallery';
 import Feedback from '@/pages/feedback';
 
+import Results from '@/pages/results';
+
 // Admissions sub-pages
 import FeeStructure from '@/pages/fee-structure';
 import Application from '@/pages/application';
@@ -44,6 +46,7 @@ function Router() {
         <Route path="/enrollment" component={Enrollment} />
         <Route path="/streams" component={Streams} />
         <Route path="/principal-message" component={PrincipalMessage} />
+        <Route path="/results" component={Results} />
         <Route component={NotFound} />
       </Switch>
     </RootLayout>
