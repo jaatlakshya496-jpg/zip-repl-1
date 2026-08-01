@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { X, ZoomIn, Images, ChevronLeft, ChevronRight } from 'lucide-react';
+import heroSchoolImg from '@assets/bal-vikas-public-school_1784611430239.jpg';
 
 // All uploaded school photos
 const galleryImages = [
@@ -157,6 +158,8 @@ export default function Gallery() {
     <main>
       {/* Hero Banner */}
       <section className="bg-primary py-16 relative overflow-hidden">
+        <img src={heroSchoolImg} alt="" className="absolute inset-0 w-full h-full object-cover object-center opacity-100" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/30 to-primary/55" />
         <motion.div
           className="absolute inset-0 opacity-10"
           animate={{ backgroundPosition: ['0% 0%', '100% 100%'] }}

@@ -6,23 +6,47 @@ import heroImg from '@assets/principal-ramphal-sharma.png';
 export default function Interview() {
   return (
     <div className="flex flex-col">
-      <div className="bg-primary pt-24 pb-16 px-4 relative overflow-hidden">
-        <img src={heroImg} alt="" className="absolute inset-0 w-full h-full object-cover object-top opacity-100" />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/30 to-primary/55" />
-        <div className="container mx-auto text-center relative z-10">
-          <ScrollReveal>
-            <span className="text-secondary font-semibold uppercase tracking-widest text-sm">Admissions</span>
-            <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4 mt-2">Interview & Interaction</h1>
-            <div className="w-24 h-1.5 bg-secondary mx-auto rounded-full" />
-            <p className="mt-6 text-primary-foreground/80 text-lg max-w-2xl mx-auto">
-              A brief, friendly interaction with the student and parents — not a test.
-            </p>
-          </ScrollReveal>
-          <ScrollReveal>
-            <Link href="/admissions" className="inline-flex items-center gap-2 mt-6 text-primary-foreground/70 hover:text-secondary transition-colors text-sm font-medium">
-              <ArrowLeft className="w-4 h-4" /> Back to Admissions
-            </Link>
-          </ScrollReveal>
+      <div className="bg-primary pt-24 pb-0 px-4 relative overflow-hidden">
+        <div className="container mx-auto relative z-10">
+          <div className="flex flex-col md:flex-row items-end gap-8">
+
+            {/* Left — text */}
+            <div className="flex-1 pb-16 text-center md:text-left">
+              <ScrollReveal>
+                <span className="text-secondary font-semibold uppercase tracking-widest text-sm">Admissions</span>
+                <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4 mt-2">Interview &amp; Interaction</h1>
+                <div className="w-24 h-1.5 bg-secondary rounded-full md:mx-0 mx-auto" />
+                <p className="mt-6 text-primary-foreground/80 text-lg max-w-xl">
+                  A brief, friendly interaction with the student and parents — not a test.
+                </p>
+              </ScrollReveal>
+              <ScrollReveal>
+                <Link href="/admissions" className="inline-flex items-center gap-2 mt-6 text-primary-foreground/70 hover:text-secondary transition-colors text-sm font-medium">
+                  <ArrowLeft className="w-4 h-4" /> Back to Admissions
+                </Link>
+              </ScrollReveal>
+            </div>
+
+            {/* Right — principal photo */}
+            <div className="shrink-0 flex flex-col items-center pb-0">
+              <div className="relative">
+                {/* Glow ring behind photo */}
+                <div className="absolute -inset-3 rounded-t-3xl bg-secondary/20 blur-xl" />
+                <img
+                  src={heroImg}
+                  alt="Sh. Ramphal Sharma — Principal"
+                  className="relative w-64 md:w-80 rounded-t-3xl object-cover object-top shadow-2xl border-4 border-secondary/40"
+                  style={{ maxHeight: 380 }}
+                />
+                {/* Name badge at bottom of photo */}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent rounded-b-none px-4 py-4">
+                  <p className="text-white font-serif font-bold text-base leading-tight">Sh. Ramphal Sharma</p>
+                  <p className="text-secondary text-xs font-semibold uppercase tracking-wider">Principal &amp; Founder</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
 

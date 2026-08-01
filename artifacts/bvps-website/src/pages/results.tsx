@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
 import { Trophy, Medal, Star, Award, Filter, X } from 'lucide-react';
+import heroSchoolImg from '@assets/bal-vikas-public-school_1784611430239.jpg';
 
 // ── Football photos ──────────────────────────────────────────────────
 import imgSweetAnishAryan    from '@assets/res-sweet-anish-aryan-u19-football.jpg';
@@ -303,6 +304,8 @@ export default function Results() {
 
       {/* ── Hero ── */}
       <div className="bg-primary pt-24 pb-20 px-4 relative overflow-hidden">
+        <img src={heroSchoolImg} alt="" className="absolute inset-0 w-full h-full object-cover object-center opacity-100" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/30 to-primary/55" />
         <div className="absolute inset-0 pointer-events-none select-none">
           {[...Array(10)].map((_, i) => (
             <motion.div key={i}
