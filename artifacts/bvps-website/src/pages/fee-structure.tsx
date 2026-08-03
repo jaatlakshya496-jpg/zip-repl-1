@@ -1,7 +1,40 @@
+import { useState } from 'react';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
 import { Link } from 'wouter';
-import { IndianRupee, CheckCircle2, Phone, ArrowLeft, Info, BookOpen, FlaskConical, TrendingUp, Palette } from 'lucide-react';
+import { IndianRupee, CheckCircle2, Phone, ArrowLeft, Info, BookOpen, FlaskConical, TrendingUp, Palette, ChevronDown } from 'lucide-react';
 import heroImg from '@assets/generated_images/hero-school.jpg';
+
+// ── UPI Payment Config ────────────────────────────────────────────────────────
+const UPI_ID  = 'bvpskalayat@sbi';
+const UPI_NAME = 'Bal Vikas Public School';
+
+const classAdmissionAmounts: Record<string, number> = {
+  'Class 1': 3000, 'Class 2': 3000,
+  'Class 3': 3500, 'Class 4': 3500, 'Class 5': 3500,
+  'Class 6': 4500, 'Class 7': 4500, 'Class 8': 4500,
+  'Class 9': 5500, 'Class 10': 5500,
+  'Class 11 – Arts': 7000, 'Class 11 – Commerce': 7000, 'Class 11 – Non-Medical': 7000,
+  'Class 12 – Arts': 7000, 'Class 12 – Commerce': 7000, 'Class 12 – Non-Medical': 7000,
+};
+
+const classOptions = Object.keys(classAdmissionAmounts);
+
+function upiLink(scheme: string, amount: number, note: string) {
+  const base = `pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
+  if (scheme === 'phonepe')  return `phonepe://pay?${base}`;
+  if (scheme === 'gpay')     return `tez://upi/pay?${base}`;
+  if (scheme === 'paytm')    return `paytmmp://pay?${base}`;
+  if (scheme === 'bhim')     return `bhim://pay?${base}`;
+  return `upi://pay?${base}`;
+}
+
+const upiApps = [
+  { id: 'phonepe', label: 'PhonePe',   bg: 'bg-[#5f259f]', logo: 'https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.png' },
+  { id: 'gpay',    label: 'Google Pay', bg: 'bg-white border border-gray-200', logo: 'https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg' },
+  { id: 'paytm',   label: 'Paytm',     bg: 'bg-[#002970]', logo: 'https://upload.wikimedia.org/wikipedia/commons/4/42/Paytm_logo.png' },
+  { id: 'bhim',    label: 'BHIM UPI',  bg: 'bg-[#00529b]', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/1200px-UPI-Logo-vector.svg.png' },
+  { id: 'upi',     label: 'Any UPI App', bg: 'bg-gray-800', logo: null },
+];
 
 // ── Fee Data ──────────────────────────────────────────────────────────────────
 
@@ -64,6 +97,10 @@ const seniorStreams = [
 ];
 
 export default function FeeStructure() {
+  const [selectedClass, setSelectedClass] = useState<string>('Class 1');
+  const admissionAmt = classAdmissionAmounts[selectedClass];
+  const payNote = `Admission Fee – ${selectedClass} – BVPS Kalayat`;
+
   return (
     <div className="flex flex-col">
 
@@ -239,29 +276,92 @@ export default function FeeStructure() {
             </div>
           </ScrollReveal>
 
-          {/* ── Payment Options ── */}
+          {/* ── Interactive UPI Payment ── */}
           <ScrollReveal>
-            <div className="bg-white rounded-3xl border border-border shadow-md p-8">
-              <h2 className="text-2xl font-serif font-bold text-black mb-6 flex items-center gap-2">
-                <IndianRupee className="w-6 h-6 text-secondary" /> Fee Payment Options
-              </h2>
-              <div className="space-y-3">
+            <div className="bg-white rounded-3xl border border-border shadow-md overflow-hidden">
+
+              {/* Header */}
+              <div className="bg-primary px-8 py-6 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center shrink-0">
+                  <IndianRupee className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-serif font-bold text-white">Pay Admission Fee Online</h2>
+                  <p className="text-primary-foreground/70 text-sm">Select your class — amount fills automatically</p>
+                </div>
+              </div>
+
+              <div className="p-8 space-y-8">
+
+                {/* Step 1 — Class selector */}
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Step 1 — Select Class</p>
+                  <div className="relative">
+                    <select
+                      value={selectedClass}
+                      onChange={e => setSelectedClass(e.target.value)}
+                      className="w-full appearance-none border-2 border-primary/30 focus:border-primary rounded-xl px-4 py-3.5 text-base font-semibold text-black bg-white outline-none cursor-pointer pr-10"
+                    >
+                      {classOptions.map(cls => (
+                        <option key={cls} value={cls}>{cls}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-primary pointer-events-none" />
+                  </div>
+                </div>
+
+                {/* Amount display */}
+                <div className="bg-green-50 border-2 border-green-200 rounded-2xl px-6 py-5 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-widest text-green-700 mb-1">Admission Fee for {selectedClass}</p>
+                    <p className="text-4xl font-serif font-bold text-green-700">₹ {admissionAmt.toLocaleString('en-IN')}</p>
+                    <p className="text-xs text-green-600 mt-1">One-time · Session 2025–26</p>
+                  </div>
+                  <div className="w-14 h-14 rounded-full bg-green-200 flex items-center justify-center">
+                    <IndianRupee className="w-7 h-7 text-green-700" />
+                  </div>
+                </div>
+
+                {/* Step 2 — UPI Apps */}
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Step 2 — Choose Payment App</p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {upiApps.map(app => (
+                      <a
+                        key={app.id}
+                        href={upiLink(app.id, admissionAmt, payNote)}
+                        className={`flex flex-col items-center gap-2 py-4 px-3 rounded-2xl ${app.bg} hover:scale-105 active:scale-95 transition-transform cursor-pointer shadow-sm`}
+                      >
+                        {app.logo ? (
+                          <img src={app.logo} alt={app.label} className="h-8 object-contain" />
+                        ) : (
+                          <IndianRupee className="w-8 h-8 text-white" />
+                        )}
+                        <span className={`text-xs font-bold ${app.id === 'gpay' ? 'text-gray-700' : 'text-white'}`}>
+                          {app.label}
+                        </span>
+                        <span className={`text-[10px] font-semibold ${app.id === 'gpay' ? 'text-gray-500' : 'text-white/80'}`}>
+                          ₹ {admissionAmt.toLocaleString('en-IN')} →
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+                  <p className="mt-3 text-xs text-muted-foreground flex items-start gap-1.5">
+                    <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                    Clicking opens the selected app with UPI ID <span className="font-mono font-semibold text-black">bvpskalayat@sbi</span> and the amount pre-filled. Confirm payment in your app.
+                  </p>
+                </div>
+
+                {/* Cash option */}
                 <div className="flex items-start gap-3 text-sm p-4 rounded-xl bg-muted/30 border border-border">
                   <IndianRupee className="w-4 h-4 text-secondary mt-0.5 shrink-0" />
                   <div>
-                    <p className="font-semibold text-black">Cash</p>
-                    <p className="text-xs text-muted-foreground">At the school office during working hours (Mon–Sat, 9 AM – 2 PM)</p>
+                    <p className="font-semibold text-black">Pay by Cash at School Office</p>
+                    <p className="text-xs text-muted-foreground">Mon–Sat, 9 AM – 2 PM · Railway Road, Kalayat</p>
                   </div>
                 </div>
-                <a href="upi://pay?pa=bvpskalayat@sbi&pn=Bal%20Vikas%20Public%20School&cu=INR"
-                  className="flex items-start gap-3 text-sm p-4 rounded-xl bg-green-50 border border-green-200 hover:bg-green-100 transition-colors group">
-                  <IndianRupee className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
-                  <div className="flex-1">
-                    <p className="font-semibold text-black group-hover:text-green-700">UPI / PhonePe / GPay / Paytm</p>
-                    <p className="text-xs text-muted-foreground">UPI ID: <span className="font-mono font-bold text-green-700">bvpskalayat@sbi</span></p>
-                    <p className="text-xs text-green-600 font-semibold mt-0.5">Tap to open payment app →</p>
-                  </div>
-                </a>
+
+                {/* Bank Transfer */}
                 <div className="text-sm rounded-xl border border-blue-200 overflow-hidden">
                   <div className="flex items-start gap-3 p-4 bg-blue-50">
                     <IndianRupee className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
@@ -277,6 +377,7 @@ export default function FeeStructure() {
                     </div>
                   </div>
                 </div>
+
               </div>
             </div>
           </ScrollReveal>
