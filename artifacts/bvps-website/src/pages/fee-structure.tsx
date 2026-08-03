@@ -1,11 +1,73 @@
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
 import { Link } from 'wouter';
-import { IndianRupee, CheckCircle2, Phone, ArrowLeft, Info } from 'lucide-react';
+import { IndianRupee, CheckCircle2, Phone, ArrowLeft, Info, BookOpen, FlaskConical, TrendingUp, Palette } from 'lucide-react';
 import heroImg from '@assets/generated_images/hero-school.jpg';
+
+// ── Fee Data ──────────────────────────────────────────────────────────────────
+
+const classFees = [
+  { cls: 'Class 1',  group: 'Primary',   color: 'bg-blue-50',   badge: 'bg-blue-100 text-blue-700',   admission: '₹ 3,000', monthly: '₹ 900',   annualFund: '₹ 1,500', totalYear: '₹ 12,300' },
+  { cls: 'Class 2',  group: 'Primary',   color: 'bg-blue-50',   badge: 'bg-blue-100 text-blue-700',   admission: '₹ 3,000', monthly: '₹ 950',   annualFund: '₹ 1,500', totalYear: '₹ 12,900' },
+  { cls: 'Class 3',  group: 'Primary',   color: 'bg-blue-50',   badge: 'bg-blue-100 text-blue-700',   admission: '₹ 3,500', monthly: '₹ 1,000', annualFund: '₹ 1,800', totalYear: '₹ 13,800' },
+  { cls: 'Class 4',  group: 'Primary',   color: 'bg-blue-50',   badge: 'bg-blue-100 text-blue-700',   admission: '₹ 3,500', monthly: '₹ 1,050', annualFund: '₹ 1,800', totalYear: '₹ 14,400' },
+  { cls: 'Class 5',  group: 'Primary',   color: 'bg-blue-50',   badge: 'bg-blue-100 text-blue-700',   admission: '₹ 3,500', monthly: '₹ 1,100', annualFund: '₹ 2,000', totalYear: '₹ 15,200' },
+  { cls: 'Class 6',  group: 'Middle',    color: 'bg-green-50',  badge: 'bg-green-100 text-green-700', admission: '₹ 4,500', monthly: '₹ 1,300', annualFund: '₹ 2,000', totalYear: '₹ 17,600' },
+  { cls: 'Class 7',  group: 'Middle',    color: 'bg-green-50',  badge: 'bg-green-100 text-green-700', admission: '₹ 4,500', monthly: '₹ 1,400', annualFund: '₹ 2,000', totalYear: '₹ 18,800' },
+  { cls: 'Class 8',  group: 'Middle',    color: 'bg-green-50',  badge: 'bg-green-100 text-green-700', admission: '₹ 4,500', monthly: '₹ 1,500', annualFund: '₹ 2,500', totalYear: '₹ 20,500' },
+  { cls: 'Class 9',  group: 'Secondary', color: 'bg-orange-50', badge: 'bg-orange-100 text-orange-700', admission: '₹ 5,500', monthly: '₹ 2,500', annualFund: '₹ 5,000', totalYear: '₹ 35,000' },
+  { cls: 'Class 10', group: 'Secondary', color: 'bg-orange-50', badge: 'bg-orange-100 text-orange-700', admission: '₹ 5,500', monthly: '₹ 2,500', annualFund: '₹ 5,000', totalYear: '₹ 35,000' },
+];
+
+const seniorStreams = [
+  {
+    stream: 'Arts',
+    hindiName: 'कला',
+    icon: Palette,
+    color: 'from-purple-600 to-purple-800',
+    lightBg: 'bg-purple-50',
+    border: 'border-purple-200',
+    textColor: 'text-purple-700',
+    subjects: ['Hindi / English', 'History', 'Political Science', 'Geography', 'Economics / Fine Arts'],
+    admission: '₹ 7,000',
+    monthly: '₹ 2,800',
+    annualFund: '₹ 6,400',
+    totalYear: '₹ 40,000',
+  },
+  {
+    stream: 'Commerce',
+    hindiName: 'वाणिज्य',
+    icon: TrendingUp,
+    color: 'from-emerald-600 to-emerald-800',
+    lightBg: 'bg-emerald-50',
+    border: 'border-emerald-200',
+    textColor: 'text-emerald-700',
+    subjects: ['Accountancy', 'Business Studies', 'Economics', 'English / Hindi', 'Maths (optional)'],
+    admission: '₹ 7,000',
+    monthly: '₹ 3,200',
+    annualFund: '₹ 6,600',
+    totalYear: '₹ 45,000',
+  },
+  {
+    stream: 'Non-Medical',
+    hindiName: 'विज्ञान',
+    icon: FlaskConical,
+    color: 'from-blue-600 to-blue-800',
+    lightBg: 'bg-blue-50',
+    border: 'border-blue-200',
+    textColor: 'text-blue-700',
+    subjects: ['Physics', 'Chemistry', 'Mathematics', 'English', 'Computer Science / Biology'],
+    admission: '₹ 7,000',
+    monthly: '₹ 3,700',
+    annualFund: '₹ 5,600',
+    totalYear: '₹ 50,000',
+  },
+];
 
 export default function FeeStructure() {
   return (
     <div className="flex flex-col">
+
+      {/* ── Hero ── */}
       <div className="bg-primary pt-24 pb-16 px-4 relative overflow-hidden">
         <img src={heroImg} alt="" className="absolute inset-0 w-full h-full object-cover object-center opacity-100" />
         <div className="absolute inset-0 bg-gradient-to-b from-primary/30 to-primary/55" />
@@ -15,7 +77,7 @@ export default function FeeStructure() {
             <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4 mt-2">Fee Structure</h1>
             <div className="w-24 h-1.5 bg-secondary mx-auto rounded-full" />
             <p className="mt-6 text-primary-foreground/80 text-lg max-w-2xl mx-auto">
-              Transparent fee details for all classes — session 2025–26.
+              Complete, transparent fee details for Class 1 to 12 — Session 2025–26.
             </p>
           </ScrollReveal>
           <ScrollReveal>
@@ -27,53 +89,130 @@ export default function FeeStructure() {
       </div>
 
       <section className="py-20 bg-background">
-        <div className="container mx-auto px-4 md:px-6 max-w-4xl space-y-12">
+        <div className="container mx-auto px-4 md:px-6 max-w-5xl space-y-14">
 
-          {/* Fee Table */}
+          {/* ── Class 1–10 Table ── */}
           <ScrollReveal>
             <div className="bg-white rounded-3xl border border-border shadow-md overflow-hidden">
               <div className="bg-primary px-8 py-6 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center shrink-0">
-                  <IndianRupee className="w-5 h-5 text-primary" />
+                  <BookOpen className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-serif font-bold text-white">Class-wise Fee Structure</h2>
-                  <p className="text-primary-foreground/70 text-sm">Approximate guide — exact details at admission office</p>
+                  <h2 className="text-2xl font-serif font-bold text-white">Class 1 – 10 Fee Structure</h2>
+                  <p className="text-primary-foreground/70 text-sm">Session 2025–26</p>
                 </div>
               </div>
+
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-primary/5 border-b border-border">
                     <tr>
-                      <th className="text-left px-6 py-3 font-bold text-black">Class</th>
-                      <th className="text-left px-6 py-3 font-bold text-black">Admission Fee (one-time)</th>
-                      <th className="text-left px-6 py-3 font-bold text-black">Monthly Tuition</th>
+                      <th className="text-left px-5 py-3 font-bold text-black">Class</th>
+                      <th className="text-left px-5 py-3 font-bold text-black">Level</th>
+                      <th className="text-left px-5 py-3 font-bold text-black">Admission Fee<br /><span className="text-xs font-normal text-muted-foreground">(one-time)</span></th>
+                      <th className="text-left px-5 py-3 font-bold text-black">Monthly Tuition</th>
+                      <th className="text-left px-5 py-3 font-bold text-black">Annual Fund</th>
+                      <th className="text-left px-5 py-3 font-bold text-black text-green-700">Total / Year</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
-                    {[
-                      ['Class 1 – 5',   '₹ 1,500', '₹ 600 – 800'],
-                      ['Class 6 – 8',   '₹ 2,000', '₹ 800 – 1,000'],
-                      ['Class 9 – 10',  '₹ 2,500', '₹ 1,000 – 1,200'],
-                      ['Class 11 – 12', '₹ 3,000', '₹ 1,200 – 1,500'],
-                    ].map(([cls, adm, mon]) => (
-                      <tr key={cls} className="hover:bg-muted/30 transition-colors">
-                        <td className="px-6 py-4 font-semibold text-black">{cls}</td>
-                        <td className="px-6 py-4 text-muted-foreground">{adm}</td>
-                        <td className="px-6 py-4 text-muted-foreground">{mon}</td>
+                    {classFees.map((row) => (
+                      <tr key={row.cls} className={`${row.color} hover:brightness-95 transition-all`}>
+                        <td className="px-5 py-3.5 font-bold text-black">{row.cls}</td>
+                        <td className="px-5 py-3.5">
+                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${row.badge}`}>{row.group}</span>
+                        </td>
+                        <td className="px-5 py-3.5 text-muted-foreground">{row.admission}</td>
+                        <td className="px-5 py-3.5 text-muted-foreground">{row.monthly}</td>
+                        <td className="px-5 py-3.5 text-muted-foreground">{row.annualFund}</td>
+                        <td className="px-5 py-3.5 font-bold text-green-700">{row.totalYear}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-              <div className="px-6 py-4 bg-amber-50 border-t border-amber-100 flex items-start gap-2 text-xs text-amber-700">
+
+              <div className="px-6 py-4 bg-primary/5 border-t border-border flex items-start gap-2 text-xs text-muted-foreground">
                 <Info className="w-4 h-4 shrink-0 mt-0.5" />
-                Annual charges, exam fees &amp; activity fees are separate. Visit the admission office for exact amounts.
+                Annual total excludes one-time admission fee. Admission fee is paid only once at the time of joining.
               </div>
             </div>
           </ScrollReveal>
 
-          {/* Documents Required */}
+          {/* ── Class 11–12 Stream Cards ── */}
+          <ScrollReveal>
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0">
+                  <IndianRupee className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-serif font-bold text-black">Class 11 &amp; 12 — Stream-wise Fees</h2>
+                  <p className="text-muted-foreground text-sm">Session 2025–26 · Choose your stream below</p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-6">
+                {seniorStreams.map((s) => {
+                  const Icon = s.icon;
+                  return (
+                    <div key={s.stream} className={`rounded-3xl border ${s.border} overflow-hidden shadow-md`}>
+                      {/* Stream header */}
+                      <div className={`bg-gradient-to-br ${s.color} px-6 py-5 text-white`}>
+                        <div className="flex items-center gap-2 mb-1">
+                          <Icon className="w-5 h-5" />
+                          <span className="text-xs font-semibold uppercase tracking-widest opacity-80">Stream</span>
+                        </div>
+                        <h3 className="text-2xl font-serif font-bold">{s.stream}</h3>
+                        <p className="text-white/70 text-sm">{s.hindiName}</p>
+                      </div>
+
+                      {/* Fee breakdown */}
+                      <div className={`${s.lightBg} px-6 py-5 space-y-3`}>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Admission Fee <span className="text-xs">(one-time)</span></span>
+                          <span className="font-semibold text-black">{s.admission}</span>
+                        </div>
+                        <div className="flex justify-between text-sm border-t border-border pt-3">
+                          <span className="text-muted-foreground">Monthly Tuition</span>
+                          <span className="font-semibold text-black">{s.monthly}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Annual Fund</span>
+                          <span className="font-semibold text-black">{s.annualFund}</span>
+                        </div>
+                        <div className={`flex justify-between text-base font-bold border-t border-border pt-3 ${s.textColor}`}>
+                          <span>Total per Year</span>
+                          <span>{s.totalYear}</span>
+                        </div>
+                      </div>
+
+                      {/* Subjects */}
+                      <div className="px-6 py-4 bg-white border-t border-border">
+                        <p className="text-xs font-bold text-black mb-2 uppercase tracking-wide">Key Subjects</p>
+                        <ul className="space-y-1">
+                          {s.subjects.map((sub) => (
+                            <li key={sub} className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <CheckCircle2 className={`w-3.5 h-3.5 shrink-0 ${s.textColor}`} />
+                              {sub}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <p className="mt-4 text-xs text-muted-foreground flex items-start gap-1.5">
+                <Info className="w-4 h-4 shrink-0 mt-0.5" />
+                Admission fee (₹ 7,000) is paid only once at the time of joining. Annual total = monthly × 12 + annual fund.
+              </p>
+            </div>
+          </ScrollReveal>
+
+          {/* ── Documents Required ── */}
           <ScrollReveal>
             <div className="bg-white rounded-3xl border border-border shadow-md p-8">
               <h2 className="text-2xl font-serif font-bold text-black mb-2">Documents Required at Admission</h2>
@@ -100,7 +239,7 @@ export default function FeeStructure() {
             </div>
           </ScrollReveal>
 
-          {/* Payment Options */}
+          {/* ── Payment Options ── */}
           <ScrollReveal>
             <div className="bg-white rounded-3xl border border-border shadow-md p-8">
               <h2 className="text-2xl font-serif font-bold text-black mb-6 flex items-center gap-2">
@@ -142,7 +281,7 @@ export default function FeeStructure() {
             </div>
           </ScrollReveal>
 
-          {/* CTA */}
+          {/* ── CTA ── */}
           <ScrollReveal>
             <div className="bg-primary text-white rounded-3xl p-8 text-center">
               <h3 className="text-xl font-serif font-bold mb-2">Questions about fees?</h3>
