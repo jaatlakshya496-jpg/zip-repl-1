@@ -1,39 +1,95 @@
 import { useState } from 'react';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
 import { Link } from 'wouter';
-import { IndianRupee, CheckCircle2, Phone, ArrowLeft, Info, BookOpen, FlaskConical, TrendingUp, Palette, ChevronDown } from 'lucide-react';
+import { IndianRupee, CheckCircle2, Phone, ArrowLeft, Info, BookOpen, FlaskConical, TrendingUp, Palette, ChevronDown, Copy, Check, QrCode, Smartphone } from 'lucide-react';
+import QRCode from 'react-qr-code';
 import heroImg from '@assets/generated_images/hero-school.jpg';
 
 // ── UPI Payment Config ────────────────────────────────────────────────────────
-const UPI_ID  = 'bvpskalayat@sbi';
+const UPI_ID   = 'bvpskalayat@sbi';
 const UPI_NAME = 'Bal Vikas Public School';
 
 const classAdmissionAmounts: Record<string, number> = {
-  'Class 1': 3000, 'Class 2': 3000,
-  'Class 3': 3500, 'Class 4': 3500, 'Class 5': 3500,
-  'Class 6': 4500, 'Class 7': 4500, 'Class 8': 4500,
-  'Class 9': 5500, 'Class 10': 5500,
+  'Class 1': 3000,  'Class 2': 3000,
+  'Class 3': 3500,  'Class 4': 3500,  'Class 5': 3500,
+  'Class 6': 4500,  'Class 7': 4500,  'Class 8': 4500,
+  'Class 9': 5500,  'Class 10': 5500,
   'Class 11 – Arts': 7000, 'Class 11 – Commerce': 7000, 'Class 11 – Non-Medical': 7000,
   'Class 12 – Arts': 7000, 'Class 12 – Commerce': 7000, 'Class 12 – Non-Medical': 7000,
 };
-
 const classOptions = Object.keys(classAdmissionAmounts);
 
-function upiLink(scheme: string, amount: number, note: string) {
-  const base = `pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
-  if (scheme === 'phonepe')  return `phonepe://pay?${base}`;
-  if (scheme === 'gpay')     return `tez://upi/pay?${base}`;
-  if (scheme === 'paytm')    return `paytmmp://pay?${base}`;
-  if (scheme === 'bhim')     return `bhim://pay?${base}`;
-  return `upi://pay?${base}`;
+function upiString(amount: number, note: string) {
+  return `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
+}
+function appLink(scheme: string, amount: number, note: string) {
+  const q = `pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
+  if (scheme === 'phonepe') return `phonepe://pay?${q}`;
+  if (scheme === 'gpay')    return `tez://upi/pay?${q}`;
+  if (scheme === 'paytm')   return `paytmmp://pay?${q}`;
+  if (scheme === 'bhim')    return `bhim://pay?${q}`;
+  return `upi://pay?${q}`;
 }
 
 const upiApps = [
-  { id: 'phonepe', label: 'PhonePe',   bg: 'bg-[#5f259f]', logo: 'https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.png' },
-  { id: 'gpay',    label: 'Google Pay', bg: 'bg-white border border-gray-200', logo: 'https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg' },
-  { id: 'paytm',   label: 'Paytm',     bg: 'bg-[#002970]', logo: 'https://upload.wikimedia.org/wikipedia/commons/4/42/Paytm_logo.png' },
-  { id: 'bhim',    label: 'BHIM UPI',  bg: 'bg-[#00529b]', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/1200px-UPI-Logo-vector.svg.png' },
-  { id: 'upi',     label: 'Any UPI App', bg: 'bg-gray-800', logo: null },
+  {
+    id: 'phonepe', label: 'PhonePe',
+    gradient: 'from-[#5f259f] to-[#7b2fbe]',
+    textColor: 'text-white',
+    logo: (
+      <svg viewBox="0 0 60 60" className="w-8 h-8" fill="none">
+        <rect width="60" height="60" rx="12" fill="#5f259f"/>
+        <text x="50%" y="56%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="22" fontWeight="bold" fontFamily="Arial">Pe</text>
+      </svg>
+    ),
+  },
+  {
+    id: 'gpay', label: 'Google Pay',
+    gradient: 'from-white to-gray-50',
+    textColor: 'text-gray-700',
+    border: 'border border-gray-200',
+    logo: (
+      <svg viewBox="0 0 60 60" className="w-8 h-8" fill="none">
+        <rect width="60" height="60" rx="12" fill="white"/>
+        <text x="50%" y="56%" dominantBaseline="middle" textAnchor="middle" fontSize="18" fontWeight="bold" fontFamily="Arial">
+          <tspan fill="#4285F4">G</tspan><tspan fill="#EA4335">P</tspan>
+        </text>
+      </svg>
+    ),
+  },
+  {
+    id: 'paytm', label: 'Paytm',
+    gradient: 'from-[#002970] to-[#00457c]',
+    textColor: 'text-white',
+    logo: (
+      <svg viewBox="0 0 60 60" className="w-8 h-8" fill="none">
+        <rect width="60" height="60" rx="12" fill="#002970"/>
+        <text x="50%" y="56%" dominantBaseline="middle" textAnchor="middle" fill="#00b9f1" fontSize="13" fontWeight="bold" fontFamily="Arial">PAY</text>
+      </svg>
+    ),
+  },
+  {
+    id: 'bhim', label: 'BHIM UPI',
+    gradient: 'from-[#00529b] to-[#006cbf]',
+    textColor: 'text-white',
+    logo: (
+      <svg viewBox="0 0 60 60" className="w-8 h-8" fill="none">
+        <rect width="60" height="60" rx="12" fill="#00529b"/>
+        <text x="50%" y="56%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="13" fontWeight="bold" fontFamily="Arial">BHIM</text>
+      </svg>
+    ),
+  },
+  {
+    id: 'upi', label: 'Other UPI',
+    gradient: 'from-gray-700 to-gray-900',
+    textColor: 'text-white',
+    logo: (
+      <svg viewBox="0 0 60 60" className="w-8 h-8" fill="none">
+        <rect width="60" height="60" rx="12" fill="#555"/>
+        <text x="50%" y="56%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="13" fontWeight="bold" fontFamily="Arial">UPI</text>
+      </svg>
+    ),
+  },
 ];
 
 // ── Fee Data ──────────────────────────────────────────────────────────────────
@@ -98,8 +154,19 @@ const seniorStreams = [
 
 export default function FeeStructure() {
   const [selectedClass, setSelectedClass] = useState<string>('Class 1');
+  const [copied, setCopied]               = useState(false);
+  const [payTab, setPayTab]               = useState<'qr' | 'apps'>('qr');
+
   const admissionAmt = classAdmissionAmounts[selectedClass];
-  const payNote = `Admission Fee – ${selectedClass} – BVPS Kalayat`;
+  const payNote      = `Admission Fee – ${selectedClass} – BVPS Kalayat`;
+  const upiStr       = upiString(admissionAmt, payNote);
+
+  function copyUpiId() {
+    navigator.clipboard.writeText(UPI_ID).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
 
   return (
     <div className="flex flex-col">
@@ -322,34 +389,73 @@ export default function FeeStructure() {
                   </div>
                 </div>
 
-                {/* Step 2 — UPI Apps */}
+                {/* Step 2 — Pay now */}
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Step 2 — Choose Payment App</p>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {upiApps.map(app => (
-                      <a
-                        key={app.id}
-                        href={upiLink(app.id, admissionAmt, payNote)}
-                        className={`flex flex-col items-center gap-2 py-4 px-3 rounded-2xl ${app.bg} hover:scale-105 active:scale-95 transition-transform cursor-pointer shadow-sm`}
-                      >
-                        {app.logo ? (
-                          <img src={app.logo} alt={app.label} className="h-8 object-contain" />
-                        ) : (
-                          <IndianRupee className="w-8 h-8 text-white" />
-                        )}
-                        <span className={`text-xs font-bold ${app.id === 'gpay' ? 'text-gray-700' : 'text-white'}`}>
-                          {app.label}
-                        </span>
-                        <span className={`text-[10px] font-semibold ${app.id === 'gpay' ? 'text-gray-500' : 'text-white/80'}`}>
-                          ₹ {admissionAmt.toLocaleString('en-IN')} →
-                        </span>
-                      </a>
-                    ))}
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Step 2 — Pay Now</p>
+
+                  {/* Tab switcher */}
+                  <div className="flex rounded-xl overflow-hidden border border-border mb-5">
+                    <button
+                      onClick={() => setPayTab('qr')}
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold transition-colors ${payTab === 'qr' ? 'bg-primary text-white' : 'bg-white text-muted-foreground hover:bg-muted/40'}`}
+                    >
+                      <QrCode className="w-4 h-4" /> Scan QR Code
+                    </button>
+                    <button
+                      onClick={() => setPayTab('apps')}
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold transition-colors ${payTab === 'apps' ? 'bg-primary text-white' : 'bg-white text-muted-foreground hover:bg-muted/40'}`}
+                    >
+                      <Smartphone className="w-4 h-4" /> Open App Directly
+                    </button>
                   </div>
-                  <p className="mt-3 text-xs text-muted-foreground flex items-start gap-1.5">
-                    <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                    Clicking opens the selected app with UPI ID <span className="font-mono font-semibold text-black">bvpskalayat@sbi</span> and the amount pre-filled. Confirm payment in your app.
-                  </p>
+
+                  {/* QR Code tab */}
+                  {payTab === 'qr' && (
+                    <div className="flex flex-col items-center gap-4 py-4">
+                      <div className="bg-white p-4 rounded-2xl border-2 border-primary/20 shadow-md">
+                        <QRCode value={upiStr} size={200} bgColor="#ffffff" fgColor="#0a1e3d" />
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm font-semibold text-black">Scan with any UPI app</p>
+                        <p className="text-xs text-muted-foreground mt-1">PhonePe · Google Pay · Paytm · BHIM · Any bank app</p>
+                        <p className="text-xs text-green-700 font-semibold mt-2">Amount ₹ {admissionAmt.toLocaleString('en-IN')} already filled</p>
+                      </div>
+
+                      {/* Copy UPI ID */}
+                      <button
+                        onClick={copyUpiId}
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-primary/30 text-sm font-semibold text-primary hover:bg-primary/5 transition-colors"
+                      >
+                        {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                        {copied ? 'Copied!' : `Copy UPI ID: ${UPI_ID}`}
+                      </button>
+                    </div>
+                  )}
+
+                  {/* App buttons tab */}
+                  {payTab === 'apps' && (
+                    <div>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        {upiApps.map(app => (
+                          <a
+                            key={app.id}
+                            href={appLink(app.id, admissionAmt, payNote)}
+                            className={`flex flex-col items-center gap-2 py-4 px-3 rounded-2xl bg-gradient-to-br ${app.gradient} ${app.border ?? ''} hover:scale-105 active:scale-95 transition-transform cursor-pointer shadow-sm`}
+                          >
+                            {app.logo}
+                            <span className={`text-xs font-bold ${app.textColor}`}>{app.label}</span>
+                            <span className={`text-[10px] font-semibold ${app.textColor} opacity-80`}>
+                              ₹ {admissionAmt.toLocaleString('en-IN')} →
+                            </span>
+                          </a>
+                        ))}
+                      </div>
+                      <p className="mt-3 text-xs text-muted-foreground flex items-start gap-1.5">
+                        <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                        Mobile pe tap karo — app khulega with UPI ID <span className="font-mono font-semibold text-black">{UPI_ID}</span> aur amount ₹{admissionAmt.toLocaleString('en-IN')} already filled.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Cash option */}
