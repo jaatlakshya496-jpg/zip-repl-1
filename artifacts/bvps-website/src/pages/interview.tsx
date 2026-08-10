@@ -1,9 +1,19 @@
+import { useState } from 'react';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
 import { Link } from 'wouter';
 import { Building2, PhoneCall, CheckCircle2, Info, Video, ArrowLeft, ArrowRight, Phone } from 'lucide-react';
 import heroImg from '@assets/principal-ramphal-sharma.png';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+const timeSlots = ['9:00 AM – 10:00 AM', '10:00 AM – 11:00 AM', '11:00 AM – 12:00 PM', '12:00 PM – 1:00 PM'];
 
 export default function Interview() {
+  const [interviewDate, setInterviewDate] = useState('');
+  const [interviewSlot, setInterviewSlot] = useState('');
+  const [interviewMode, setInterviewMode] = useState('');
+  const [scheduled, setScheduled] = useState(false);
+
   return (
     <div className="flex flex-col">
       <div className="bg-primary pt-24 pb-0 px-4 relative overflow-hidden">
@@ -109,6 +119,84 @@ export default function Interview() {
             </ScrollReveal>
           </div>
 
+          {/* Schedule interview */}
+          <ScrollReveal>
+            <div className="bg-white rounded-2xl border border-border shadow-sm p-6 md:p-8">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center shrink-0">
+                  <Phone className="w-5 h-5 text-secondary" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-black text-lg">Schedule Your Interview</h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Choose your preferred date, time and interaction mode. Our admissions team will confirm it with you.
+                  </p>
+                </div>
+              </div>
+
+              {scheduled ? (
+                <div className="rounded-xl bg-green-50 border border-green-200 p-5 flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="font-bold text-green-800">Interview preference saved</p>
+                    <p className="text-sm text-green-700 mt-1">
+                      {interviewDate} · {interviewSlot} · {interviewMode === 'in-person' ? 'In-Person at School' : 'Phone Call'}
+                    </p>
+                    <p className="text-xs text-green-700 mt-2">The school team will contact you to confirm the final slot.</p>
+                    <button
+                      type="button"
+                      onClick={() => setScheduled(false)}
+                      className="mt-3 text-xs font-bold text-green-800 underline underline-offset-2"
+                    >
+                      Change preference
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Preferred Date</label>
+                      <Input
+                        type="date"
+                        value={interviewDate}
+                        onChange={e => setInterviewDate(e.target.value)}
+                        min={new Date().toISOString().split('T')[0]}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Preferred Time</label>
+                      <Select value={interviewSlot} onValueChange={setInterviewSlot}>
+                        <SelectTrigger><SelectValue placeholder="Select time slot" /></SelectTrigger>
+                        <SelectContent>
+                          {timeSlots.map(slot => <SelectItem key={slot} value={slot}>{slot}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Mode</label>
+                      <Select value={interviewMode} onValueChange={setInterviewMode}>
+                        <SelectTrigger><SelectValue placeholder="Choose mode" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="in-person">In-Person (School Visit)</SelectItem>
+                          <SelectItem value="phone">Phone Call</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={!interviewDate || !interviewSlot || !interviewMode}
+                    onClick={() => setScheduled(true)}
+                    className="mt-5 inline-flex items-center gap-2 rounded-full bg-secondary px-6 h-11 text-sm font-bold text-primary transition-colors hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <CheckCircle2 className="w-4 h-4" /> Save Interview Preference
+                  </button>
+                </>
+              )}
+            </div>
+          </ScrollReveal>
+
           {/* Tips */}
           <div className="grid md:grid-cols-2 gap-6">
             {[
@@ -155,7 +243,7 @@ export default function Interview() {
             <div className="bg-primary text-white rounded-3xl p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
               <div>
                 <h3 className="text-xl font-serif font-bold mb-1">Ready to schedule your interaction?</h3>
-                <p className="text-primary-foreground/80 text-sm">Fill the application form to choose your preferred date &amp; mode.</p>
+                <p className="text-primary-foreground/80 text-sm">Choose your preferred date and mode above, then submit the application separately.</p>
               </div>
               <Link href="/application" className="inline-flex items-center gap-2 bg-secondary text-primary hover:bg-secondary/90 font-bold rounded-full px-8 h-11 text-sm transition-colors whitespace-nowrap">
                 Apply Now <ArrowRight className="w-4 h-4" />

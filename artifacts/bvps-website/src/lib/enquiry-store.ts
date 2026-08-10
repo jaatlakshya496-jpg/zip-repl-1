@@ -11,9 +11,9 @@ export interface EnquiryApplication {
   address: string;
   previousSchool: string;
   stream: string;
-  interviewDate: string;
-  interviewSlot: string;
-  interviewMode: string;
+  interviewDate?: string;
+  interviewSlot?: string;
+  interviewMode?: string;
   message: string;
   submittedAt: string;
 }
