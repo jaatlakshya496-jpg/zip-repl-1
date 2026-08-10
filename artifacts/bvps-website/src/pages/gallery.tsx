@@ -260,16 +260,27 @@ export default function Gallery() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] bg-black/96 flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] overflow-hidden bg-[#03050b]/95 backdrop-blur-md flex items-center justify-center p-4 md:p-8"
             onClick={closeLightbox}
           >
+            {/* Colorful ambient glow over the black backdrop */}
+            <div className="pointer-events-none absolute -left-32 top-[-12rem] h-[32rem] w-[32rem] rounded-full bg-orange-500/20 blur-[110px]" />
+            <div className="pointer-events-none absolute -right-32 bottom-[-14rem] h-[34rem] w-[34rem] rounded-full bg-cyan-500/20 blur-[120px]" />
+            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[26rem] w-[26rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-fuchsia-500/10 blur-[100px]" />
+
+            {/* Gallery counter */}
+            <div className="absolute left-5 top-5 z-10 rounded-full border border-white/15 bg-white/[0.08] px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/75 backdrop-blur-xl md:left-8 md:top-8">
+              BVPS Gallery <span className="mx-1 text-secondary">•</span> {lightboxIndex + 1} / {filtered.length}
+            </div>
+
             {/* Close */}
             <motion.button
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 }}
               onClick={closeLightbox}
-              className="absolute top-4 right-4 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 p-2 rounded-full transition-colors z-10"
+              aria-label="Close photo viewer"
+              className="absolute right-5 top-5 z-10 rounded-full border border-white/15 bg-white/[0.08] p-3 text-white/80 shadow-lg backdrop-blur-xl transition-all hover:rotate-90 hover:border-secondary/60 hover:bg-secondary hover:text-primary md:right-8 md:top-8"
             >
               <X className="w-6 h-6" />
             </motion.button>
@@ -277,7 +288,8 @@ export default function Gallery() {
             {/* Prev */}
             <button
               onClick={prevImage}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors z-10"
+              aria-label="Previous photo"
+              className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/15 bg-gradient-to-br from-orange-500/80 to-pink-600/80 p-3 text-white shadow-xl shadow-orange-500/20 transition-all hover:scale-110 hover:from-orange-400 hover:to-fuchsia-500 md:left-8"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
@@ -291,17 +303,20 @@ export default function Gallery() {
                 exit={{ opacity: 0, scale: 0.88, x: -60 }}
                 transition={{ duration: 0.3, ease: 'easeOut' }}
                 onClick={(e) => e.stopPropagation()}
-                className="max-w-4xl max-h-[85vh] flex flex-col items-center gap-4"
+                className="relative z-[1] flex max-h-[88vh] w-[min(92vw,1100px)] max-w-5xl flex-col items-center gap-3"
               >
-                <img
-                  src={filtered[lightboxIndex].src}
-                  alt={filtered[lightboxIndex].caption}
-                  className="max-h-[74vh] max-w-full object-contain rounded-xl shadow-2xl"
-                />
-                <div className="text-center">
-                  <p className="text-white font-bold text-lg">{filtered[lightboxIndex].caption}</p>
-                  <p className="text-secondary text-sm mt-1 font-semibold">{filtered[lightboxIndex].category}</p>
-                  <p className="text-white/40 text-xs mt-2">{lightboxIndex + 1} / {filtered.length}</p>
+                <div className="w-full rounded-[1.35rem] bg-gradient-to-br from-orange-400 via-fuchsia-500 to-cyan-400 p-[2px] shadow-[0_0_70px_rgba(217,70,239,0.2)]">
+                  <div className="rounded-[1.25rem] border border-white/10 bg-[#05070d]/90 p-2 md:p-3">
+                    <img
+                      src={filtered[lightboxIndex].src}
+                      alt={filtered[lightboxIndex].caption}
+                      className="mx-auto max-h-[68vh] w-auto max-w-full rounded-[0.9rem] object-contain shadow-2xl"
+                    />
+                  </div>
+                </div>
+                <div className="w-full max-w-2xl rounded-2xl border border-white/15 bg-white/[0.08] px-5 py-3 text-center shadow-2xl backdrop-blur-xl md:px-8 md:py-4">
+                  <p className="text-base font-bold text-white md:text-lg">{filtered[lightboxIndex].caption}</p>
+                  <p className="mt-1 text-sm font-semibold text-secondary">{filtered[lightboxIndex].category}</p>
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -309,19 +324,21 @@ export default function Gallery() {
             {/* Next */}
             <button
               onClick={nextImage}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors z-10"
+              aria-label="Next photo"
+              className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/15 bg-gradient-to-br from-cyan-400/80 to-blue-600/80 p-3 text-white shadow-xl shadow-cyan-500/20 transition-all hover:scale-110 hover:from-cyan-300 hover:to-blue-500 md:right-8"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
 
             {/* Progress strip */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1 flex-wrap justify-center max-w-xs">
+            <div className="absolute bottom-4 left-1/2 z-10 flex max-w-xs -translate-x-1/2 flex-wrap justify-center gap-1.5 rounded-full border border-white/10 bg-black/30 px-3 py-2 backdrop-blur-md">
               {filtered.map((_, i) => (
                 <motion.button
                   key={i}
                   onClick={(e) => { e.stopPropagation(); setLightboxIndex(i); }}
-                  animate={{ backgroundColor: i === lightboxIndex ? '#f5c518' : 'rgba(255,255,255,0.25)' }}
-                  className="w-1.5 h-1.5 rounded-full"
+                  aria-label={`View photo ${i + 1}`}
+                  animate={{ backgroundColor: i === lightboxIndex ? '#f97316' : 'rgba(255,255,255,0.3)' }}
+                  className={`h-1.5 rounded-full transition-all ${i === lightboxIndex ? 'w-6' : 'w-1.5 hover:bg-white/70'}`}
                 />
               ))}
             </div>
