@@ -94,7 +94,17 @@ const galleryImages = [
 const categories = ['All', 'Campus', 'Students', 'Staff & Faculty', 'Events & Achievements'];
 
 // Animated card with useInView for scroll-triggered entrance
-function GalleryCard({ img, idx, onClick }: { img: typeof galleryImages[0]; idx: number; onClick: () => void }) {
+function GalleryCard({
+  img,
+  idx,
+  onClick,
+  layoutClass = '',
+}: {
+  img: typeof galleryImages[0];
+  idx: number;
+  onClick: () => void;
+  layoutClass?: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
 
@@ -105,7 +115,7 @@ function GalleryCard({ img, idx, onClick }: { img: typeof galleryImages[0]; idx:
       animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
       transition={{ duration: 0.45, delay: (idx % 8) * 0.06, ease: 'easeOut' }}
       whileHover={{ y: -6, scale: 1.03, zIndex: 10 }}
-      className="relative group rounded-2xl overflow-hidden cursor-pointer bg-gray-100 aspect-square shadow-md"
+      className={`relative group h-full min-h-[180px] overflow-hidden rounded-[1.35rem] bg-gray-100 shadow-md cursor-pointer md:min-h-[220px] ${layoutClass}`}
       onClick={onClick}
     >
       <motion.img
@@ -156,44 +166,72 @@ export default function Gallery() {
 
   return (
     <main>
-      {/* Hero Banner */}
-      <section className="bg-primary py-16 relative overflow-hidden">
-        <img src={heroSchoolImg} alt="" className="absolute inset-0 w-full h-full object-cover object-center opacity-100" />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/30 to-primary/55" />
-        <motion.div
-          className="absolute inset-0 opacity-10"
-          animate={{ backgroundPosition: ['0% 0%', '100% 100%'] }}
-          transition={{ duration: 20, repeat: Infinity, repeatType: 'reverse' }}
-          style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '36px 36px' }}
-        />
-        <div className="container mx-auto px-4 md:px-6 relative">
+      {/* Editorial Hero */}
+      <section className="relative overflow-hidden bg-[#07101f] py-10 text-white md:py-14">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_25%,rgba(249,115,22,0.18),transparent_30%),radial-gradient(circle_at_90%_80%,rgba(34,211,238,0.16),transparent_34%)]" />
+        <div className="container relative mx-auto grid max-w-6xl items-center gap-10 px-4 md:grid-cols-[1.05fr_0.95fr] md:px-6">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center"
+            initial={{ opacity: 0, x: -28 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.55 }}
+            className="max-w-xl"
           >
-            <motion.div
-              className="flex items-center justify-center gap-3 mb-4"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
-            >
-              <Images className="w-8 h-8 text-secondary" />
-              <span className="text-secondary font-semibold uppercase tracking-widest text-sm">Visual Stories</span>
-            </motion.div>
-            <h1 className="font-serif text-5xl md:text-6xl font-bold text-white mb-4">Photo Gallery</h1>
-            <p className="text-primary-foreground/70 text-lg max-w-2xl mx-auto">
-              {galleryImages.length} photos — campus, students, staff, and memorable moments from BVPS.
+            <div className="mb-5 flex items-center gap-3">
+              <span className="h-px w-10 bg-secondary" />
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-secondary">The BVPS Archive</span>
+            </div>
+            <h1 className="font-serif text-5xl font-bold leading-[0.95] tracking-tight text-white md:text-7xl">
+              Moments that
+              <span className="block bg-gradient-to-r from-orange-400 via-pink-400 to-cyan-300 bg-clip-text text-transparent">
+                stay with us.
+              </span>
+            </h1>
+            <p className="mt-6 max-w-lg text-base leading-relaxed text-white/65 md:text-lg">
+              Explore the people, places and celebrations that make Bal Vikas Public School a special part of Kalayat.
             </p>
+            <div className="mt-8 flex flex-wrap items-center gap-3 text-sm">
+              <div className="rounded-full border border-white/15 bg-white/10 px-4 py-2 backdrop-blur-sm">
+                <span className="font-bold text-white">{galleryImages.length}</span>
+                <span className="ml-1.5 text-white/55">visual stories</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-white/55">
+                <span className="h-2 w-2 rounded-full bg-orange-400" />
+                <span className="h-2 w-2 rounded-full bg-pink-400" />
+                <span className="h-2 w-2 rounded-full bg-cyan-300" />
+                Real moments from BVPS
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94, rotate: 2 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 0.65, delay: 0.12 }}
+            className="relative mx-auto w-full max-w-md"
+          >
+            <div className="absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-orange-400 via-fuchsia-500 to-cyan-400 opacity-70 blur-xl" />
+            <div className="relative rounded-[1.7rem] border border-white/20 bg-white/10 p-2 shadow-2xl backdrop-blur-sm">
+              <img
+                src={heroSchoolImg}
+                alt="Bal Vikas Public School campus and activities"
+                className="h-[280px] w-full rounded-[1.35rem] object-cover md:h-[330px]"
+              />
+              <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between rounded-xl border border-white/15 bg-black/45 px-4 py-3 backdrop-blur-md">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-secondary">Featured story</p>
+                  <p className="mt-1 text-sm font-semibold text-white">Life at Bal Vikas</p>
+                </div>
+                <Images className="h-5 w-5 text-cyan-300" />
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>
 
       {/* Filter Bar */}
-      <section className="bg-background border-b border-border sticky top-[72px] z-30 shadow-sm">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex items-center gap-2 py-3 overflow-x-auto scrollbar-hide">
+      <section className="sticky top-[72px] z-30 border-b border-white/10 bg-[#0c1729] shadow-xl">
+        <div className="container mx-auto max-w-6xl px-4 md:px-6">
+          <div className="flex items-center gap-2 overflow-x-auto py-4 scrollbar-hide">
             {categories.map((cat) => (
               <motion.button
                 key={cat}
@@ -201,13 +239,13 @@ export default function Gallery() {
                 whileTap={{ scale: 0.95 }}
                 className={`shrink-0 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
                   activeCategory === cat
-                    ? 'bg-primary text-white shadow-md scale-105'
-                    : 'bg-muted text-muted-foreground hover:bg-muted/70'
+                    ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg shadow-orange-500/20 scale-105'
+                    : 'border border-white/10 bg-white/[0.07] text-white/60 hover:bg-white/15 hover:text-white'
                 }`}
               >
                 {cat}
                 {cat !== 'All' && (
-                  <span className={`ml-1.5 text-xs ${activeCategory === cat ? 'text-white/70' : 'text-muted-foreground/60'}`}>
+                  <span className={`ml-1.5 text-xs ${activeCategory === cat ? 'text-white/75' : 'text-white/40'}`}>
                     ({galleryImages.filter(i => i.category === cat).length})
                   </span>
                 )}
@@ -217,18 +255,24 @@ export default function Gallery() {
         </div>
       </section>
 
-      {/* Grid */}
-      <section className="py-10 bg-muted/20">
-        <div className="container mx-auto px-4 md:px-6">
-          <motion.p
-            key={activeCategory}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-sm text-muted-foreground mb-6"
-          >
-            Showing {filtered.length} photo{filtered.length !== 1 ? 's' : ''}
-            {activeCategory !== 'All' ? ` in "${activeCategory}"` : ''}
-          </motion.p>
+      {/* Editorial Grid */}
+      <section className="min-h-[60vh] bg-[#f3f5f9] py-12 md:py-16">
+        <div className="container mx-auto max-w-6xl px-4 md:px-6">
+          <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <p className="mb-2 text-xs font-bold uppercase tracking-[0.22em] text-orange-500">Browse the collection</p>
+              <h2 className="font-serif text-3xl font-bold text-[#07101f] md:text-4xl">Stories from school life</h2>
+            </div>
+            <motion.p
+              key={activeCategory}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-500 shadow-sm"
+            >
+              {filtered.length} photo{filtered.length !== 1 ? 's' : ''}
+              {activeCategory !== 'All' ? ` · ${activeCategory}` : ' · All stories'}
+            </motion.p>
+          </div>
 
           <AnimatePresence mode="wait">
             <motion.div
@@ -237,7 +281,7 @@ export default function Gallery() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"
+              className="grid auto-rows-[180px] grid-cols-2 gap-3 sm:grid-cols-3 md:auto-rows-[220px] md:grid-cols-4 md:gap-4"
             >
               {filtered.map((img, idx) => (
                 <GalleryCard
@@ -245,6 +289,13 @@ export default function Gallery() {
                   img={img}
                   idx={idx}
                   onClick={() => setLightboxIndex(idx)}
+                  layoutClass={
+                    idx === 0
+                      ? 'col-span-2 row-span-2'
+                      : idx % 9 === 4
+                        ? 'col-span-2 row-span-1'
+                        : ''
+                  }
                 />
               ))}
             </motion.div>
