@@ -15,6 +15,7 @@ import smartImg from '@assets/generated_images/facility-smartclass.jpg';
 import classroomImg from '@assets/generated_images/about-classroom.jpg';
 import buildingImg from '@assets/Screenshot_20260721_095657_1784611430157.jpg';
 import campusImg from '@assets/Screenshot_20260721_100046_1784611430370.jpg';
+import schoolBuildingImg from '@assets/Screenshot_20260721_095726_1784611430190.jpg';
 
 export default function Facilities() {
   const facilities = [
@@ -58,7 +59,7 @@ export default function Facilities() {
       title: 'Spacious Classrooms',
       description: 'Well-ventilated, naturally lit, and spacious classrooms (31 in total) designed to provide a comfortable learning environment.',
       icon: LayoutGrid,
-      image: classroomImg
+      image: schoolBuildingImg
     }
   ];
 

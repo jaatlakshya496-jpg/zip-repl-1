@@ -4,43 +4,63 @@ import { ScrollReveal } from '@/components/ui/scroll-reveal';
 import { Target, BookOpen, Clock, Heart, Award, Quote, X, ArrowRight } from 'lucide-react';
 import aboutImg from '@assets/generated_images/about-classroom.jpg';
 import principalImg from '@assets/principal-ramphal-sharma.png';
-import schoolTypeImg from '@assets/generated_images/about-school-type.jpg';
-import academicImg from '@assets/generated_images/about-academic-level.jpg';
-import mediumImg from '@assets/generated_images/about-medium.jpg';
-import hoursImg from '@assets/generated_images/about-school-hours.jpg';
+import schoolBuildingImg from '@assets/Screenshot_20260721_095657_1784611430157.jpg';
+import studentsImg from '@assets/Screenshot_20260721_095726_1784611430190.jpg';
+import campusImg from '@assets/Screenshot_20260721_100046_1784611430370.jpg';
+import schoolEventImg from '@assets/Screenshot_20260721_100100_1784611430387.jpg';
 
 const overviewCards = [
   {
     icon: Award,
     title: 'School Type',
     desc: 'Private, Co-educational\n(Boys & Girls)',
-    image: schoolTypeImg,
+    image: schoolBuildingImg,
     detail: 'Bal Vikas Public School is a private co-educational institution welcoming both boys and girls from Class 1 to 12, fostering a balanced and inclusive learning environment.',
   },
   {
     icon: BookOpen,
     title: 'Academic Level',
     desc: 'Senior Secondary\n(Classes 1 to 12)',
-    image: academicImg,
+    image: studentsImg,
     detail: 'We offer a complete academic journey from primary through senior secondary (Class 12), preparing students for board exams and higher education.',
   },
   {
     icon: Heart,
     title: 'Medium',
     desc: 'Hindi Medium Instruction\nwith English integration',
-    image: mediumImg,
+    image: schoolEventImg,
     detail: 'Instruction is delivered in Hindi to keep students rooted in their language, while English is integrated across subjects to build confidence in both languages.',
   },
   {
     icon: Clock,
     title: 'School Hours',
     desc: 'Mon–Sat: 8:00 AM – 3:00 PM\nSunday: Closed',
-    image: hoursImg,
+    image: campusImg,
     detail: 'School runs six days a week, Monday to Saturday, from 8:00 AM to 3:00 PM. Morning assembly begins the day, building discipline and community spirit.',
   },
 ];
 
 type OverviewCard = typeof overviewCards[number];
+
+function CountUp({ value, suffix = '' }: { value: number; suffix?: string }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let frame = 0;
+    const start = performance.now();
+    const duration = 1400;
+    const animate = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(value * eased));
+      if (progress < 1) frame = requestAnimationFrame(animate);
+    };
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [value]);
+
+  return <>{count.toLocaleString('en-IN')}{suffix}</>;
+}
 
 export default function About() {
   const [selected, setSelected] = useState<OverviewCard | null>(null);
@@ -80,14 +100,22 @@ export default function About() {
                 <p className="text-lg text-muted-foreground leading-relaxed">
                   What started as a modest endeavor has blossomed into Kalayat's most trusted neighborhood school, now proudly serving over 945 students from Classes 1 to 12. We are a private, co-educational senior secondary institution offering instruction in Hindi medium, ensuring our students remain connected to their linguistic roots while mastering modern curriculum.
                 </p>
-                <div className="pt-4 flex gap-8 border-t border-border mt-8">
+                <div className="pt-4 grid grid-cols-2 sm:grid-cols-4 gap-5 border-t border-border mt-8">
                   <div>
-                    <p className="text-4xl font-serif font-bold text-black">2004</p>
+                    <p className="text-3xl font-serif font-bold text-black"><CountUp value={2004} /></p>
                     <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Established</p>
                   </div>
                   <div>
-                    <p className="text-4xl font-serif font-bold text-black">1-12</p>
-                    <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Classes Offered</p>
+                    <p className="text-3xl font-serif font-bold text-black"><CountUp value={945} suffix="+" /></p>
+                    <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Students</p>
+                  </div>
+                  <div>
+                    <p className="text-3xl font-serif font-bold text-black"><CountUp value={29} suffix="+" /></p>
+                    <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Teachers</p>
+                  </div>
+                  <div>
+                    <p className="text-3xl font-serif font-bold text-black"><CountUp value={12} /></p>
+                    <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Classes 1–12</p>
                   </div>
                 </div>
               </div>

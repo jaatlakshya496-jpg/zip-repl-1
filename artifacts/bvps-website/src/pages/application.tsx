@@ -4,7 +4,7 @@ import { ScrollReveal } from '@/components/ui/scroll-reveal';
 import { Link } from 'wouter';
 import {
   Send, CheckCircle2, Phone, ArrowLeft,
-  User, Briefcase, Calendar, Star,
+  User, Briefcase,
 } from 'lucide-react';
 import heroImg from '@assets/bal-vikas-public-school-kalayat-kaithal-schools-3t6w6qk_1784611430223.jpg';
 import { saveApplication } from '@/lib/enquiry-store';
@@ -13,8 +13,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const timeSlots = ['9:00 AM – 10:00 AM', '10:00 AM – 11:00 AM', '11:00 AM – 12:00 PM', '12:00 PM – 1:00 PM'];
-
 export default function Application() {
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -22,7 +20,6 @@ export default function Application() {
     studentName: '', dob: '', gender: '', classApplying: '', stream: '',
     parentName: '', relation: '', mobile: '', email: '',
     address: '', previousSchool: '', message: '',
-    interviewDate: '', interviewSlot: '', interviewMode: '',
   });
 
   const showStream = form.classApplying === '11' || form.classApplying === '12';
@@ -50,7 +47,7 @@ export default function Application() {
     if (Object.keys(errs).length > 0) return;
     saveApplication({ ...form });
     setSubmitted(true);
-    setForm({ studentName: '', dob: '', gender: '', classApplying: '', stream: '', parentName: '', relation: '', mobile: '', email: '', address: '', previousSchool: '', message: '', interviewDate: '', interviewSlot: '', interviewMode: '' });
+    setForm({ studentName: '', dob: '', gender: '', classApplying: '', stream: '', parentName: '', relation: '', mobile: '', email: '', address: '', previousSchool: '', message: '' });
   }
 
   return (
@@ -190,39 +187,6 @@ export default function Application() {
                         <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Residential Address *</label>
                         <Textarea placeholder="House No., Street, Village/Town, District, Pincode" value={form.address} onChange={e => set('address', e.target.value)} className="resize-none min-h-[80px]" />
                         {errors.address && <p className="text-xs text-destructive mt-1">{errors.address}</p>}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Interview Preference */}
-                  <div>
-                    <h4 className="font-bold text-black mb-1 flex items-center gap-2 text-base">
-                      <Calendar className="w-4 h-4 text-secondary" /> Interview / Interaction Preference
-                    </h4>
-                    <p className="text-xs text-muted-foreground mb-4">Optional — our team will confirm your slot</p>
-                    <div className="grid sm:grid-cols-3 gap-4">
-                      <div>
-                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Preferred Date</label>
-                        <Input type="date" value={form.interviewDate} onChange={e => set('interviewDate', e.target.value)} min={new Date().toISOString().split('T')[0]} />
-                      </div>
-                      <div>
-                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Preferred Time Slot</label>
-                        <Select value={form.interviewSlot} onValueChange={v => set('interviewSlot', v)}>
-                          <SelectTrigger><SelectValue placeholder="Select slot" /></SelectTrigger>
-                          <SelectContent>
-                            {timeSlots.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Mode</label>
-                        <Select value={form.interviewMode} onValueChange={v => set('interviewMode', v)}>
-                          <SelectTrigger><SelectValue placeholder="How to meet?" /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="in-person">In-Person (School Visit)</SelectItem>
-                            <SelectItem value="phone">Phone Call</SelectItem>
-                          </SelectContent>
-                        </Select>
                       </div>
                     </div>
                   </div>

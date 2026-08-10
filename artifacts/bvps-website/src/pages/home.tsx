@@ -10,6 +10,8 @@ import playImg from '@assets/generated_images/home-facility-playground.jpg';
 import cctvImg from '@assets/generated_images/home-facility-cctv.jpg';
 import roImg from '@assets/generated_images/home-facility-ro-water.jpg';
 import classImg from '@assets/generated_images/home-facility-classroom.jpg';
+import realPlaygroundImg from '@assets/Screenshot_20260721_095641_1784611430135.jpg';
+import realBuildingImg from '@assets/Screenshot_20260721_095657_1784611430157.jpg';
 
 // Real BVPS hero images from uploaded photos
 const heroSlides = [
@@ -36,20 +38,40 @@ const heroSlides = [
 ];
 
 const stats = [
-  { icon: Users, label: 'Students', value: '945+' },
-  { icon: GraduationCap, label: 'Teachers', value: '29+' },
-  { icon: Building2, label: 'Classrooms', value: '31' },
-  { icon: Calendar, label: 'Established', value: '2004' },
+  { icon: Users, label: 'Students', value: 945, suffix: '+' },
+  { icon: GraduationCap, label: 'Teachers', value: 29, suffix: '+' },
+  { icon: Building2, label: 'Classrooms', value: 31, suffix: '' },
+  { icon: Calendar, label: 'Established', value: 2004, suffix: '' },
 ];
 
+function CountUp({ value, suffix = '' }: { value: number; suffix?: string }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let frame = 0;
+    const start = performance.now();
+    const duration = 1400;
+    const animate = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(value * eased));
+      if (progress < 1) frame = requestAnimationFrame(animate);
+    };
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [value]);
+
+  return <>{count.toLocaleString('en-IN')}{suffix}</>;
+}
+
 const facilities = [
-  { icon: BookOpen,   name: 'Library',        desc: 'Rich collection of books for all classes',   image: libImg  },
-  { icon: Monitor,    name: 'Computer Lab',    desc: 'Modern computers with internet access',       image: compImg },
-  { icon: Monitor,    name: 'Smart Classes',   desc: 'Interactive digital learning boards',         image: smartImg},
-  { icon: Dumbbell,   name: 'Playground',      desc: 'Spacious ground for sports & activities',    image: playImg },
-  { icon: ShieldCheck,name: 'CCTV Security',   desc: '24/7 campus surveillance',                   image: cctvImg },
-  { icon: Droplets,   name: 'RO Water',        desc: 'Clean purified drinking water',               image: roImg   },
-  { icon: Maximize2,  name: 'Spacious Rooms',  desc: 'Well-ventilated classrooms',                 image: classImg},
+  { icon: BookOpen,   name: 'Library',        count: '2,000+ Books', desc: 'Rich collection of books for all classes',   image: libImg  },
+  { icon: Monitor,    name: 'Computer Lab',    count: '25+ Systems',  desc: 'Modern computers with internet access',       image: compImg },
+  { icon: Monitor,    name: 'Smart Classes',   count: '12 Rooms',    desc: 'Interactive digital learning boards',         image: smartImg},
+  { icon: Dumbbell,   name: 'Playground',      count: '1 Large Ground', desc: 'Spacious ground for sports & activities', image: realPlaygroundImg },
+  { icon: ShieldCheck,name: 'CCTV Security',   count: '24/7 Safety', desc: 'Campus surveillance and student safety',      image: realBuildingImg },
+  { icon: Droplets,   name: 'RO Water',        count: 'Clean Water', desc: 'Purified drinking water for students',       image: realBuildingImg },
+  { icon: Maximize2,  name: 'Spacious Rooms',  count: '31 Classrooms', desc: 'Well-ventilated classrooms',              image: realBuildingImg},
 ];
 
 // Gallery preview - real photos
@@ -202,7 +224,9 @@ export default function Home() {
                   <stat.icon className="w-7 h-7 text-secondary" />
                 </div>
                 <div>
-                  <p className="text-4xl font-serif font-bold text-black leading-none">{stat.value}</p>
+                   <p className="text-4xl font-serif font-bold text-black leading-none">
+                     <CountUp value={stat.value} suffix={stat.suffix} />
+                   </p>
                   <p className="text-sm text-muted-foreground font-semibold mt-2 uppercase tracking-wide">{stat.label}</p>
                 </div>
               </motion.div>
@@ -268,14 +292,25 @@ export default function Home() {
                 whileHover={{ y: -6 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.07, duration: 0.4 }}
-                className="bg-white/10 border border-white/20 rounded-2xl p-6 flex flex-col items-center text-center cursor-pointer hover:bg-white/20 hover:border-secondary/60 transition-all text-left w-full group"
+                  className="bg-white/10 border border-white/20 rounded-2xl overflow-hidden flex flex-col text-center cursor-pointer hover:bg-white/20 hover:border-secondary/60 transition-all text-left w-full group"
               >
-                <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center mb-4 text-primary group-hover:scale-110 transition-transform">
-                  <f.icon className="w-6 h-6" />
+                  <div className="relative w-full h-32 overflow-hidden">
+                    <img
+                      src={f.image}
+                      alt={f.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/10 to-transparent" />
+                    <div className="absolute left-1/2 -translate-x-1/2 bottom-3 w-10 h-10 bg-secondary rounded-full flex items-center justify-center text-primary shadow-lg group-hover:scale-110 transition-transform">
+                      <f.icon className="w-5 h-5" />
+                    </div>
                 </div>
-                <h3 className="font-bold text-white text-base mb-1">{f.name}</h3>
-                <p className="text-white/65 text-xs leading-relaxed">{f.desc}</p>
-                <span className="mt-3 text-secondary text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">Tap to see →</span>
+                  <div className="p-5 flex flex-col items-center flex-1">
+                    <h3 className="font-bold text-white text-base mb-1">{f.name}</h3>
+                    <p className="text-secondary text-xs font-bold mb-1">{f.count}</p>
+                    <p className="text-white/65 text-xs leading-relaxed">{f.desc}</p>
+                    <span className="mt-3 text-secondary text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">Tap to see →</span>
+                  </div>
               </motion.button>
             ))}
           </div>
