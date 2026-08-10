@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
 import { Target, BookOpen, Clock, Heart, Award, Quote, X, ArrowRight } from 'lucide-react';
@@ -44,22 +44,46 @@ type OverviewCard = typeof overviewCards[number];
 
 function CountUp({ value, suffix = '' }: { value: number; suffix?: string }) {
   const [count, setCount] = useState(0);
+  const numberRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
+    const element = numberRef.current;
+    if (!element) return;
+
     let frame = 0;
-    const start = performance.now();
-    const duration = 1400;
-    const animate = (now: number) => {
-      const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.round(value * eased));
-      if (progress < 1) frame = requestAnimationFrame(animate);
+    let observer: IntersectionObserver | undefined;
+
+    const animate = () => {
+      const start = performance.now();
+      const duration = 1400;
+      const update = (now: number) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        setCount(Math.round(value * eased));
+        if (progress < 1) frame = requestAnimationFrame(update);
+      };
+      frame = requestAnimationFrame(update);
     };
-    frame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(frame);
+
+    if ('IntersectionObserver' in window) {
+      observer = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) {
+          animate();
+          observer?.disconnect();
+        }
+      }, { threshold: 0.35 });
+      observer.observe(element);
+    } else {
+      animate();
+    }
+
+    return () => {
+      cancelAnimationFrame(frame);
+      observer?.disconnect();
+    };
   }, [value]);
 
-  return <>{count.toLocaleString('en-IN')}{suffix}</>;
+  return <span ref={numberRef}>{count.toLocaleString('en-IN')}{suffix}</span>;
 }
 
 export default function About() {
