@@ -229,8 +229,14 @@ export default function About() {
                   </div>
                 </div>
 
-                <div className="relative z-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-                  <div className="pointer-events-none absolute left-[12%] right-[12%] top-[2.1rem] hidden h-px bg-gradient-to-r from-orange-400 via-fuchsia-400 to-teal-300 lg:block" />
+                <div className="relative z-10 grid gap-7 lg:grid-cols-4 lg:gap-5">
+                  <motion.div
+                    initial={{ scaleX: 0, opacity: 0 }}
+                    whileInView={{ scaleX: 1, opacity: 1 }}
+                    viewport={{ once: true, amount: 0.35 }}
+                    transition={{ duration: 1.2, ease: 'easeOut' }}
+                    className="pointer-events-none absolute bottom-7 left-5 top-5 w-px origin-top bg-gradient-to-b from-orange-400 via-fuchsia-400 to-teal-300 lg:bottom-auto lg:left-[12%] lg:right-[12%] lg:top-5 lg:h-px lg:w-auto lg:origin-left lg:bg-gradient-to-r"
+                  />
                   {journeyMilestones.map((milestone, index) => (
                     <motion.article
                       key={milestone.title}
@@ -238,8 +244,16 @@ export default function About() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, amount: 0.2 }}
                       transition={{ delay: index * 0.1, duration: 0.45 }}
-                      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.07] shadow-lg backdrop-blur-sm transition-colors duration-300 hover:bg-white/[0.12]"
+                      whileHover={{ y: -8 }}
+                      className="group relative ml-10 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.07] shadow-lg backdrop-blur-sm transition-colors duration-300 hover:bg-white/[0.12] lg:ml-0 lg:pt-14"
                     >
+                      <motion.div
+                        animate={{ scale: [1, 1.12, 1], boxShadow: ['0 0 0 0 rgba(249,115,22,0)', '0 0 0 8px rgba(249,115,22,0.12)', '0 0 0 0 rgba(249,115,22,0)'] }}
+                        transition={{ duration: 2.2, repeat: Infinity, delay: index * 0.2 }}
+                        className={`absolute -left-10 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border-4 border-[#07101f] bg-gradient-to-br ${milestone.color} text-white lg:left-1/2 lg:top-0 lg:-translate-x-1/2`}
+                      >
+                        <span className="h-2 w-2 rounded-full bg-white" />
+                      </motion.div>
                       <div className="relative h-36 overflow-hidden">
                         <img
                           src={milestone.image}
