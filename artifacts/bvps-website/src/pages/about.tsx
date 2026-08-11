@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
-import { Target, BookOpen, Clock, Heart, Award, Quote, X, ArrowRight } from 'lucide-react';
+import { Target, BookOpen, Clock, Heart, Award, Quote, X, ArrowRight, Flag, Building2, Trophy, Users } from 'lucide-react';
 import aboutImg from '@assets/generated_images/about-classroom.jpg';
 import principalImg from '@assets/principal-ramphal-sharma.png';
 import schoolBuildingImg from '@assets/Screenshot_20260721_095657_1784611430157.jpg';
@@ -41,6 +41,41 @@ const overviewCards = [
 ];
 
 type OverviewCard = typeof overviewCards[number];
+
+const journeyMilestones = [
+  {
+    year: '2004',
+    title: 'A Vision Takes Root',
+    description: 'Bal Vikas Public School began with a simple promise — to bring meaningful, quality education closer to the families of Kalayat.',
+    image: schoolBuildingImg,
+    icon: Flag,
+    color: 'from-orange-500 to-amber-400',
+  },
+  {
+    year: 'Growing Years',
+    title: 'Building Strong Foundations',
+    description: 'With dedicated teachers and a values-first approach, BVPS grew into a trusted school community where every child could feel seen and supported.',
+    image: campusImg,
+    icon: Building2,
+    color: 'from-cyan-500 to-blue-500',
+  },
+  {
+    year: 'Classes 1–12',
+    title: 'A Complete Learning Journey',
+    description: 'The school expanded its academic journey from primary years through senior secondary, helping students grow with confidence at every stage.',
+    image: studentsImg,
+    icon: Trophy,
+    color: 'from-fuchsia-500 to-purple-500',
+  },
+  {
+    year: 'Today',
+    title: 'A Community in Motion',
+    description: 'Today, 945+ students, 29+ teachers and 31 classrooms carry the BVPS story forward through learning, sports, creativity and achievement.',
+    image: schoolEventImg,
+    icon: Users,
+    color: 'from-emerald-500 to-teal-400',
+  },
+];
 
 function CountUp({ value, suffix = '' }: { value: number; suffix?: string }) {
   const [count, setCount] = useState(0);
@@ -156,6 +191,79 @@ export default function About() {
               </div>
             </ScrollReveal>
           </div>
+
+          {/* Our Journey */}
+          <ScrollReveal>
+            <section className="mb-24 overflow-hidden rounded-[2rem] bg-[#07101f] p-6 text-white shadow-2xl md:p-10 lg:p-12">
+              <div className="relative">
+                <div className="pointer-events-none absolute -right-20 -top-28 h-72 w-72 rounded-full bg-fuchsia-500/15 blur-3xl" />
+                <div className="pointer-events-none absolute -bottom-32 left-1/3 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl" />
+
+                <div className="relative z-10 mb-10 flex flex-col justify-between gap-5 md:flex-row md:items-end">
+                  <div className="max-w-2xl">
+                    <div className="mb-3 flex items-center gap-3">
+                      <span className="h-px w-10 bg-secondary" />
+                      <span className="text-xs font-bold uppercase tracking-[0.24em] text-secondary">Since 2004</span>
+                    </div>
+                    <h2 className="font-serif text-3xl font-bold text-white md:text-5xl">Our Journey</h2>
+                    <p className="mt-4 leading-relaxed text-white/65">
+                      From a hopeful beginning to a thriving learning community — every chapter of BVPS has been shaped by children, families and teachers moving forward together.
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-3 backdrop-blur-sm">
+                    <div className="flex -space-x-2">
+                      {[schoolBuildingImg, studentsImg, schoolEventImg].map((image, i) => (
+                        <img
+                          key={image}
+                          src={image}
+                          alt=""
+                          className="h-10 w-10 rounded-full border-2 border-[#07101f] object-cover"
+                          style={{ zIndex: 3 - i }}
+                        />
+                      ))}
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-white">One school, many stories</p>
+                      <p className="text-xs text-white/50">Growing together in Kalayat</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="relative z-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+                  <div className="pointer-events-none absolute left-[12%] right-[12%] top-[2.1rem] hidden h-px bg-gradient-to-r from-orange-400 via-fuchsia-400 to-teal-300 lg:block" />
+                  {journeyMilestones.map((milestone, index) => (
+                    <motion.article
+                      key={milestone.title}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, amount: 0.2 }}
+                      transition={{ delay: index * 0.1, duration: 0.45 }}
+                      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.07] shadow-lg backdrop-blur-sm transition-colors duration-300 hover:bg-white/[0.12]"
+                    >
+                      <div className="relative h-36 overflow-hidden">
+                        <img
+                          src={milestone.image}
+                          alt={milestone.title}
+                          className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#07101f] via-[#07101f]/20 to-transparent" />
+                        <div className={`absolute left-4 top-4 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${milestone.color} text-white shadow-lg`}>
+                          <milestone.icon className="h-5 w-5" />
+                        </div>
+                      </div>
+                      <div className="relative p-5">
+                        <div className={`mb-2 inline-flex rounded-full bg-gradient-to-r ${milestone.color} px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-white`}>
+                          {milestone.year}
+                        </div>
+                        <h3 className="font-serif text-xl font-bold text-white">{milestone.title}</h3>
+                        <p className="mt-3 text-sm leading-relaxed text-white/60">{milestone.description}</p>
+                      </div>
+                    </motion.article>
+                  ))}
+                </div>
+              </div>
+            </section>
+          </ScrollReveal>
 
           <div className="grid md:grid-cols-2 gap-8 mb-24">
             <ScrollReveal delay={0.1}>
